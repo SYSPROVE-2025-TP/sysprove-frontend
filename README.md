@@ -1,9 +1,4 @@
----
-
-### **2. Contenido Completo para el `README.md` de tu Frontend (`SYSFUN-FRONTEND`)**
-
-```markdown
-# 🎨 SYSPROVE-FRONTEND: Aplicación Web de Gestión de Ventas para Hitss Perú 🎨
+# 🎨 SYSFUN-FRONTEND: Aplicación Web de Gestión de Ventas para Hitss Perú 🎨
 
 ![Quasar Framework](https://img.shields.io/badge/Quasar_Framework-105374?style=for-the-badge&logo=quasar&logoColor=white)
 ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
