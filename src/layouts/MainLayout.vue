@@ -93,8 +93,8 @@
               <q-item-section> Perfil </q-item-section>
             </q-item>
 
-            <!-- Módulo de Ventas -->
             <q-expansion-item
+              v-if="authStore.isAdmin || authStore.isVentas"
               label="Módulo de Ventas"
               icon="monetization_on"
               expand-separator
@@ -106,7 +106,6 @@
                   </q-item-section>
                   <q-item-section> Clientes </q-item-section>
                 </q-item>
-
                 <q-item clickable v-ripple to="/gestionar-propuestas">
                   <q-item-section avatar>
                     <q-icon name="attach_money" />
@@ -122,16 +121,17 @@
                 </q-item>
               </q-list>
             </q-expansion-item>
-            <!-- Módulo de Administracion de Usuarios -->
+
             <q-expansion-item
-              label="Administracion de Usuarios"
-              icon="account_circle"
+              v-if="authStore.isAdmin"
+              label="Administración"
+              icon="admin_panel_settings"
               expand-separator
             >
               <q-list>
                 <q-item clickable v-ripple to="/gestionar-usuarios">
                   <q-item-section avatar>
-                    <q-icon name="people" />
+                    <q-icon name="manage_accounts" />
                   </q-item-section>
                   <q-item-section> Gestionar Usuarios </q-item-section>
                 </q-item>
@@ -145,31 +145,31 @@
 
                 <q-item clickable v-ripple to="/gestionar-roles">
                   <q-item-section avatar>
-                    <q-icon name="user-role" />
+                    <q-icon name="supervisor_account" />
                   </q-item-section>
                   <q-item-section> Gestion de roles </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>
-            <!-- Módulo de Desarrollo -->
+
             <q-expansion-item
+              v-if="authStore.isAdmin || authStore.isDesarrollo"
               label="Módulo de Desarrollo"
               icon="code"
               expand-separator
             >
               <q-list>
+                <q-item clickable v-ripple to="/gestionar-proyectos">
+                  <q-item-section avatar>
+                    <q-icon name="code" />
+                  </q-item-section>
+                  <q-item-section> Proyectos </q-item-section>
+                </q-item>
                 <q-item clickable v-ripple to="/desarrollo/tareas">
                   <q-item-section avatar>
                     <q-icon name="task" />
                   </q-item-section>
                   <q-item-section> Tareas </q-item-section>
-                </q-item>
-
-                <q-item clickable v-ripple to="/gestionar-proyectos">
-                  <q-item-section avatar>
-                    <q-icon name="folder" />
-                  </q-item-section>
-                  <q-item-section> Proyectos </q-item-section>
                 </q-item>
 
                 <q-item clickable v-ripple to="/desarrollo/equipos">
@@ -203,7 +203,6 @@
           </div>
         </q-img>
 
-        <!-- Botón de Cerrar Sesión en la parte inferior -->
         <div class="q-pa-md absolute-bottom-center" style="margin: auto">
           <q-btn
             round
@@ -224,41 +223,50 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useAuthStore } from "../stores/auth";
-import { useRouter } from "vue-router"; // Importar useRouter
-import axios from "axios";
-import api from "../api";
+import { useAuthStore } from "../stores/auth"; // Asegúrate que la ruta sea correcta
+import { useRouter } from "vue-router";
+import api from "../api"; // Asegúrate que la ruta sea correcta
+
 defineOptions({
   name: "MainLayout",
 });
+
 const authStore = useAuthStore();
-const router = useRouter(); // Obtener la instancia del router
+const router = useRouter();
 const leftDrawerOpen = ref(false);
-const mobileData = ref(true);
-const bluetooth = ref(false);
-const imagenUsuario = ref(null); // Variable para almacenar la URL de la imagen
+const mobileData = ref(true); // Estos parecen ser de ejemplo, puedes mantenerlos o quitarlos
+const bluetooth = ref(false); // Estos parecen ser de ejemplo, puedes mantenerlos o quitarlos
+const imagenUsuario = ref(null);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
-//Metodo para cerrar Sesion
+
 const cerrarSesion = () => {
   authStore.clearToken();
-  router.push("/login"); // Redirigir al login después de cerrar sesión
+  router.push("/login");
 };
+
 onMounted(async () => {
-  if (authStore.usuario) {
+  // Es buena práctica verificar si el usuario y su _id existen antes de hacer la llamada
+  if (authStore.usuario && authStore.usuario._id) {
     try {
+      // Asumiendo que tu instancia 'api' está configurada para enviar el token
+      // o que el interceptor de 'api.js' que te sugerí está implementado.
+      // Si no, necesitas añadir el header de Authorization aquí también.
       const response = await api.get(`/auth/imagen/${authStore.usuario._id}`, {
         headers: {
-          Authorization: authStore.token,
+          // Si tu 'api' no añade el token automáticamente, descomenta esto:
+          Authorization: `Bearer ${authStore.token}`, // Es importante el `Bearer ` si tu backend lo espera
         },
-        responseType: "blob", // Especificar que la respuesta es un blob
+        responseType: "blob",
       });
-      const imageUrl = URL.createObjectURL(response.data); // Crear una URL para el blob
+      const imageUrl = URL.createObjectURL(response.data);
       imagenUsuario.value = imageUrl;
     } catch (error) {
       console.error("Error al obtener la imagen del usuario:", error);
+      // Considera establecer una imagen de perfil por defecto en caso de error
+      // imagenUsuario.value = '/public/profile_error.svg';
     }
   }
 });
@@ -292,9 +300,10 @@ onMounted(async () => {
 
   max-width: 100%; /* Ancho completo para dispositivos */
 
-  z-index: 10;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  /* Estas propiedades están duplicadas, las puedes quitar */
+  /* z-index: 10; */
+  /* background-color: rgba(255, 255, 255, 0.9); */
+  /* box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); */
 }
 .q-header .q-btn {
   margin-right: 8px; /* Reducimos el espacio entre los botones */

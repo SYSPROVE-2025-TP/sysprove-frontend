@@ -12,7 +12,9 @@
           </q-card-section>
           <q-card-section>
             <div class="text-center q-pt-lg">
-              <div class="col text-h5 ellipsis">Bienvenido a SYSFUN SYSTEM</div>
+              <div class="col text-h5 ellipsis">
+                Bienvenido a SYSPROVE SYSTEM
+              </div>
               <div class="col text-h8 ellipsis">
                 Porfavor ingrese sus credenciales
               </div>
