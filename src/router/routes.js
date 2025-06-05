@@ -41,6 +41,12 @@ const routes = [
           import("pages/Dashboard/Ventas/GestionarContratos.vue"),
       },
       {
+        path: "/interacciones-clientes",
+        component: () =>
+          import("pages/Dashboard/Ventas/InteraccionesClientes.vue"),
+      },
+
+      {
         path: "/gestionar-proyectos",
         component: () =>
           import("pages/Dashboard/Desarrollo/GestionarProyectos.vue"),
