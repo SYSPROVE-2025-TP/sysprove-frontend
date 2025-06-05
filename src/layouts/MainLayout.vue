@@ -169,6 +169,14 @@
                   </q-item-section>
                   <q-item-section> Detallar Oportunidad </q-item-section>
                 </q-item>
+                <q-item clickable v-ripple to="/aprobar-propuesta">
+                  <q-item-section avatar>
+                    <q-icon name="sell" />
+                  </q-item-section>
+                  <q-item-section>
+                    Aprobar Descuentos especiales
+                  </q-item-section>
+                </q-item>
                 <q-item clickable v-ripple to="/reporte-ventas">
                   <q-item-section avatar>
                     <q-icon name="sell" />
@@ -180,6 +188,14 @@
                     <q-icon name="sell" />
                   </q-item-section>
                   <q-item-section> Pipeline de ventas </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/vizualizar-pipeline-ventas">
+                  <q-item-section avatar>
+                    <q-icon name="eye" />
+                  </q-item-section>
+                  <q-item-section>
+                    Visualizar Pipeline de Ventas
+                  </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>

@@ -98,6 +98,15 @@ const routes = [
         component: () =>
           import("pages/Dashboard/Desarrollo/ProyectosDesarrolloPage.vue"),
       },
+      {
+        path: "/aprobar-propuesta",
+        component: () =>
+          import("pages/Dashboard/Ventas/AprobacionPropuestas.vue"),
+      },
+      {
+        path: "/vizualizar-pipeline-ventas",
+        component: () => import("src/pages/Dashboard/PipeVentasPage.vue"),
+      },
     ],
   },
   {
