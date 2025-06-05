@@ -202,7 +202,45 @@
                   </q-item-section>
                   <q-item-section> Funcionalidad 2 </q-item-section>
                 </q-item>
+                <q-expansion-item
+                  v-if="authStore.isAdmin || authStore.isVentas"
+                  label="Repositorio de Ventas"
+                  icon="monetization_on"
+                  expand-separator
+                >
+                  <q-item
+                    clickable
+                    v-ripple
+                    to="/gestionar-propuestas-tecnicas"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="attach_money" />
+                    </q-item-section>
+                    <q-item-section> Propuestas Tecnicas </q-item-section>
+                  </q-item>
 
+                  <q-item
+                    clickable
+                    v-ripple
+                    to="/gestionar-diagrama-arquitectura"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="attach_money" />
+                    </q-item-section>
+                    <q-item-section> Diagrama de Arquitectura </q-item-section>
+                  </q-item>
+
+                  <q-item
+                    clickable
+                    v-ripple
+                    to="/gestionar-documentos-relevantes"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="attach_money" />
+                    </q-item-section>
+                    <q-item-section> Documentos Relevantes </q-item-section>
+                  </q-item>
+                </q-expansion-item>
                 <q-item clickable v-ripple to="/gestionar-proyectos">
                   <q-item-section avatar>
                     <q-icon name="code" />

@@ -2,9 +2,9 @@
   <q-page class="q-pa-md">
     <q-card>
       <q-card-section class="row items-center justify-between">
-        <div class="text-h5">Gestión de Diagramas de Arquitectura</div>
+        <div class="text-h5">Gestión de Documentos Relevantes</div>
         <q-btn
-          label="Subir nuevo diagrama"
+          label="Subir nuevo documento"
           color="primary"
           @click="abrirModalCrear"
         />
@@ -75,7 +75,7 @@
           :rows-per-page-options="[5, 10, 20]"
           :pagination="paginacion"
           @update:pagination="(val) => (paginacion = val)"
-          no-data-label="No hay diagramas disponibles"
+          no-data-label="No hay documentos disponibles"
         >
           <template v-slot:body-cell-fechaInicio="props">
             <q-td :props="props">
@@ -111,11 +111,11 @@
       </q-card-section>
     </q-card>
 
-    <!-- Modal Subir Archivo -->
+    <!-- Modal Subir Documento -->
     <q-dialog v-model="mostrarModal">
       <q-card style="width: 500px; max-width: 90vw">
         <q-card-section>
-          <div class="text-h6">Subir nuevo diagrama</div>
+          <div class="text-h6">Subir nuevo documento</div>
         </q-card-section>
 
         <q-card-section class="q-gutter-md">
@@ -165,7 +165,7 @@
       <q-card style="width: 400px; max-width: 90vw">
         <q-card-section>
           <div class="text-h6">
-            ¿Estás seguro de que deseas eliminar este diagrama?
+            ¿Estás seguro de que deseas eliminar este documento?
           </div>
         </q-card-section>
 
@@ -184,13 +184,14 @@
 </template>
 
 <script setup>
+import api from "../../../api"; // conexión axios
 import { ref, onMounted } from "vue";
 
 const archivos = ref([
   {
     _id: 1,
-    nombre: "Diagrama 1",
-    cliente: "Cliente A",
+    nombre: "Documento A",
+    cliente: "Cliente 1",
     descripcion: "Descripción A",
     fechaInicio: "2023-01-01",
     fechaFin: "2023-01-15",
@@ -199,8 +200,8 @@ const archivos = ref([
   },
   {
     _id: 2,
-    nombre: "Diagrama 2",
-    cliente: "Cliente B",
+    nombre: "Documento B",
+    cliente: "Cliente 2",
     descripcion: "Descripción B",
     fechaInicio: "2023-02-01",
     fechaFin: "2023-02-15",
@@ -209,8 +210,8 @@ const archivos = ref([
   },
   {
     _id: 3,
-    nombre: "Diagrama 3",
-    cliente: "Cliente C",
+    nombre: "Documento C",
+    cliente: "Cliente 3",
     descripcion: "Descripción C",
     fechaInicio: "2023-03-01",
     fechaFin: "2023-03-15",
@@ -219,25 +220,105 @@ const archivos = ref([
   },
   {
     _id: 4,
-    nombre: "Diagrama 4",
-    cliente: "Cliente D",
+    nombre: "Documento D",
+    cliente: "Cliente 4",
     descripcion: "Descripción D",
     fechaInicio: "2023-04-01",
     fechaFin: "2023-04-15",
     tipo: "PNG",
     estado: "Activo",
   },
+  {
+    _id: 5,
+    nombre: "Documento E",
+    cliente: "Cliente 5",
+    descripcion: "Descripción E",
+    fechaInicio: "2023-05-01",
+    fechaFin: "2023-05-15",
+    tipo: "PDF",
+    estado: "Activo",
+  },
+  {
+    _id: 6,
+    nombre: "Documento F",
+    cliente: "Cliente 6",
+    descripcion: "Descripción F",
+    fechaInicio: "2023-06-01",
+    fechaFin: "2023-06-15",
+    tipo: "DOCX",
+    estado: "Pendiente",
+  },
+  {
+    _id: 7,
+    nombre: "Documento G",
+    cliente: "Cliente 7",
+    descripcion: "Descripción G",
+    fechaInicio: "2023-07-01",
+    fechaFin: "2023-07-15",
+    tipo: "XLSX",
+    estado: "Inactivo",
+  },
+  {
+    _id: 8,
+    nombre: "Documento H",
+    cliente: "Cliente 8",
+    descripcion: "Descripción H",
+    fechaInicio: "2023-08-01",
+    fechaFin: "2023-08-15",
+    tipo: "PNG",
+    estado: "Activo",
+  },
+  {
+    _id: 9,
+    nombre: "Documento I",
+    cliente: "Cliente 9",
+    descripcion: "Descripción I",
+    fechaInicio: "2023-09-01",
+    fechaFin: "2023-09-15",
+    tipo: "PDF",
+    estado: "Pendiente",
+  },
+  {
+    _id: 10,
+    nombre: "Documento J",
+    cliente: "Cliente 10",
+    descripcion: "Descripción J",
+    fechaInicio: "2023-10-01",
+    fechaFin: "2023-10-15",
+    tipo: "DOCX",
+    estado: "Activo",
+  },
+  {
+    _id: 11,
+    nombre: "Documento K",
+    cliente: "Cliente 11",
+    descripcion: "Descripción K",
+    fechaInicio: "2023-11-01",
+    fechaFin: "2023-11-15",
+    tipo: "XLSX",
+    estado: "Inactivo",
+  },
+  {
+    _id: 12,
+    nombre: "Documento L",
+    cliente: "Cliente 12",
+    descripcion: "Descripción L",
+    fechaInicio: "2023-12-01",
+    fechaFin: "2023-12-15",
+    tipo: "PNG",
+    estado: "Pendiente",
+  },
 ]);
 
-const archivosFiltrados = ref(archivos.value);
+const archivosFiltrados = ref([]);
 const filtroNombre = ref("");
 const filtroFechaInicio = ref("");
 const filtroFechaFin = ref("");
 const filtroEstado = ref("");
 const mostrarFiltros = ref(false);
 const mostrarModal = ref(false);
-const mostrarConfirmacionEliminar = ref(false);
-const archivoAEliminar = ref(null);
+const mostrarConfirmacionEliminar = ref(false); // Para confirmar eliminación
+const archivoAEliminar = ref(null); // Archivo a eliminar
 const paginacion = ref({ rowsPerPage: 5, page: 1 });
 
 const archivoForm = ref({
@@ -317,7 +398,7 @@ const abrirModalCrear = () => {
   mostrarModal.value = true;
 };
 
-// GUARDAR ARCHIVO (solo en memoria)
+// GUARDAR EN MEMORIA
 const guardarArchivo = () => {
   const nuevoArchivo = {
     _id: archivos.value.length + 1, // Simulación de ID único
@@ -328,7 +409,7 @@ const guardarArchivo = () => {
   mostrarModal.value = false;
 };
 
-// ELIMINAR ARCHIVO (solo en memoria)
+// ELIMINAR ARCHIVO
 const eliminarArchivo = (archivo) => {
   archivoAEliminar.value = archivo;
   mostrarConfirmacionEliminar.value = true;

@@ -70,7 +70,23 @@ const routes = [
         path: "/reporte-ventas",
         component: () => import("pages/Dashboard/Ventas/ReporteDeVentas.vue"),
       },
+      {
+        path: "/gestionar-propuestas-tecnicas",
+        component: () =>
+          import("pages/Dashboard/Ventas/GestionarPropuestasTecnicas.vue"),
+      },
 
+      {
+        path: "/gestionar-diagrama-arquitectura",
+        component: () =>
+          import("pages/Dashboard/Ventas/GestionarDiagramaArquitectura.vue"),
+      },
+
+      {
+        path: "/gestionar-documentos-relevantes",
+        component: () =>
+          import("pages/Dashboard/Ventas/GestionarDocumentosRelevantes.vue"),
+      },
       //Modulo de Desarrollo
       {
         path: "/gestionar-proyectos",
