@@ -63,6 +63,11 @@ const routes = [
         component: () =>
           import("pages/Dashboard/Desarrollo/GestionarProyectos.vue"),
       },
+      {
+        path: "/proyectos-desarrollo",
+        component: () =>
+          import("pages/Dashboard/Desarrollo/ProyectosDesarrolloPage.vue"),
+      },
     ],
   },
   {

@@ -189,11 +189,17 @@
                   <q-item-section> Funcionalidad 2 </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple>
+                <q-item clickable v-ripple to="/gestionar-proyectos">
                   <q-item-section avatar>
-                    <q-icon name="attach_money" />
+                    <q-icon name="code" />
                   </q-item-section>
-                  <q-item-section> Funcionalidad 2 </q-item-section>
+                  <q-item-section> Proyectos </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/gestionar-contratos">
+                  <q-item-section avatar>
+                    <q-icon name="assignment_turned_in" />
+                  </q-item-section>
+                  <q-item-section> Contratos </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>
@@ -235,11 +241,11 @@
               expand-separator
             >
               <q-list>
-                <q-item clickable v-ripple to="/gestionar-proyectos">
+                <q-item clickable v-ripple to="/proyectos-desarrollo">
                   <q-item-section avatar>
                     <q-icon name="code" />
                   </q-item-section>
-                  <q-item-section> Proyectos </q-item-section>
+                  <q-item-section> Proyectos de Desarrollo </q-item-section>
                 </q-item>
                 <q-item clickable v-ripple to="/desarrollo/tareas">
                   <q-item-section avatar>
