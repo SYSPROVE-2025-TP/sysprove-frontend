@@ -66,6 +66,10 @@ const routes = [
         path: "/pipeline-ventas",
         component: () => import("pages/Dashboard/Ventas/PipeLineVentas.vue"),
       },
+      {
+        path: "/reporte-ventas",
+        component: () => import("pages/Dashboard/Ventas/ReporteDeVentas.vue"),
+      },
 
       //Modulo de Desarrollo
       {
