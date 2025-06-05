@@ -169,6 +169,12 @@
                   </q-item-section>
                   <q-item-section> Detallar Oportunidad </q-item-section>
                 </q-item>
+                <q-item clickable v-ripple to="/pipeline-ventas">
+                  <q-item-section avatar>
+                    <q-icon name="sell" />
+                  </q-item-section>
+                  <q-item-section> Pipeline de ventas </q-item-section>
+                </q-item>
               </q-list>
             </q-expansion-item>
             <q-expansion-item
