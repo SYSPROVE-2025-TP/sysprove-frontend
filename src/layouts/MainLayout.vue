@@ -14,13 +14,15 @@
           />
           <q-toolbar-title class="text-h6">SYSFUN SYSTEM</q-toolbar-title>
 
-          <q-btn
-            round
-            flat
-            icon="notifications"
-            aria-label="Notifications"
-            class="q-mr-sm"
-          />
+          <q-btn flat round dense to="/notificaciones-oportunidades">
+            <q-badge
+              color="red"
+              floating
+              transparent
+              :label="notificaciones.length"
+            />
+            <q-icon name="notifications" />
+          </q-btn>
           <q-btn
             round
             flat
@@ -312,6 +314,12 @@ import api from "../api"; // Asegúrate que la ruta sea correcta
 defineOptions({
   name: "MainLayout",
 });
+// Notificaciones simuladas
+const notificaciones = ref([
+  { id: 1, mensaje: "Nueva oportunidad: Empresa Alpha" },
+  { id: 2, mensaje: "Nueva oportunidad: Grupo Beta" },
+  { id: 3, mensaje: "Nueva oportunidad: Inversiones Gamma" },
+]);
 
 const authStore = useAuthStore();
 const router = useRouter();

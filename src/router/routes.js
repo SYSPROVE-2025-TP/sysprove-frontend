@@ -57,6 +57,12 @@ const routes = [
         component: () =>
           import("pages/Dashboard/Ventas/GestionarContratos.vue"),
       },
+      {
+        path: "/notificaciones-oportunidades",
+        component: () =>
+          import("pages/Dashboard/Ventas/NotificacionOportunidades.vue"),
+      },
+
       //Modulo de Desarrollo
       {
         path: "/gestionar-proyectos",

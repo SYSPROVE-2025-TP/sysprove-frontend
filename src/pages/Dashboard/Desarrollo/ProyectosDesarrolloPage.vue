@@ -12,7 +12,7 @@
           color="primary"
           icon="add"
           label="Crear Proyecto"
-          @click="irACrearProyecto"
+          @click="abrirModalCrear"
         />
       </div>
     </div>
@@ -21,7 +21,6 @@
       <q-spinner-dots color="primary" size="40px" />
       <div class="q-ml-md text-grey-8">Cargando proyectos...</div>
     </div>
-
     <div
       v-else-if="!isLoading && proyectos.length === 0"
       class="text-center q-my-xl"
@@ -62,9 +61,7 @@
               </div>
             </div>
           </q-card-section>
-
           <q-separator />
-
           <q-card-section>
             <div class="text-caption text-grey">Equipo Principal</div>
             <q-list dense>
@@ -84,7 +81,6 @@
               </q-item>
             </q-list>
           </q-card-section>
-
           <q-card-section class="q-pt-none">
             <div class="text-caption text-grey">Fechas Clave</div>
             <div class="row text-body2">
@@ -98,7 +94,6 @@
               </div>
             </div>
           </q-card-section>
-
           <q-card-actions align="right">
             <q-btn flat color="primary" @click.stop="irAlTablero(proyecto._id)"
               >Ir al Tablero</q-btn
@@ -113,57 +108,251 @@
         </q-card>
       </div>
     </div>
+
+    <q-dialog v-model="mostrarModalCrear">
+      <q-card style="width: 700px; max-width: 90vw">
+        <q-form @submit.prevent="guardarNuevoProyecto">
+          <q-card-section>
+            <div class="text-h6">Crear Nuevo Proyecto de Desarrollo</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none q-gutter-md">
+            <q-input
+              filled
+              v-model="nuevoProyectoForm.nombre"
+              label="Nombre del Proyecto *"
+              lazy-rules
+              :rules="[(val) => !!val || 'El nombre es obligatorio']"
+            />
+            <q-select
+              filled
+              v-model="nuevoProyectoForm.contratoId"
+              :options="contratosOptions"
+              label="Contrato Asociado *"
+              emit-value
+              map-options
+              lazy-rules
+              :rules="[(val) => !!val || 'Debe seleccionar un contrato']"
+              :loading="loadingContratos"
+              hint="Selecciona el contrato que da origen a este proyecto."
+            />
+            <q-input
+              filled
+              v-model="nuevoProyectoForm.descripcion"
+              label="Descripción del Proyecto"
+              type="textarea"
+              autogrow
+            />
+            <q-select
+              filled
+              v-model="nuevoProyectoForm.liderTecnicoId"
+              :options="usuariosOptions"
+              label="Líder Técnico"
+              emit-value
+              map-options
+              clearable
+              :loading="loadingUsuarios"
+            />
+            <q-select
+              filled
+              v-model="nuevoProyectoForm.equipoDesarrolloIds"
+              :options="usuariosOptions"
+              label="Miembros del Equipo"
+              multiple
+              emit-value
+              map-options
+              use-chips
+              stack-label
+              clearable
+              :loading="loadingUsuarios"
+            />
+            <div class="row q-col-gutter-sm">
+              <div class="col-6">
+                <q-input
+                  filled
+                  v-model="nuevoProyectoForm.fechaInicioEstimada"
+                  type="date"
+                  label="Fecha Inicio Estimada"
+                  stack-label
+                />
+              </div>
+              <div class="col-6">
+                <q-input
+                  filled
+                  v-model="nuevoProyectoForm.fechaFinEstimada"
+                  type="date"
+                  label="Fecha Fin Estimada"
+                  stack-label
+                />
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="right" class="q-pa-md">
+            <q-btn flat label="Cancelar" color="negative" v-close-popup />
+            <q-btn
+              type="submit"
+              label="Guardar Proyecto"
+              color="primary"
+              :loading="isSubmitting"
+            />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-// Es crucial importar el store de autenticación para poder acceder al token
-import { useAuthStore } from "../../../stores/auth"; // Asegúrate que esta ruta es correcta
+import { useQuasar } from "quasar"; // Para usar notificaciones
+import { useAuthStore } from "../../../stores/auth";
 import api from "../../../api";
 
 const router = useRouter();
-const authStore = useAuthStore(); // Crea una instancia del store
+const $q = useQuasar(); // Instancia de Quasar
+const authStore = useAuthStore();
 const proyectos = ref([]);
 const isLoading = ref(true);
 
-// --- LÓGICA DE OBTENCIÓN DE DATOS ---
+// --- NUEVAS VARIABLES DE ESTADO PARA EL DIÁLOGO ---
+const mostrarModalCrear = ref(false);
+const isSubmitting = ref(false);
+const nuevoProyectoForm = ref({
+  nombre: "",
+  descripcion: "",
+  contratoId: null,
+  liderTecnicoId: null,
+  equipoDesarrolloIds: [],
+  fechaInicioEstimada: "",
+  fechaFinEstimada: "",
+});
+
+// Opciones para los selectores del formulario
+const contratosOptions = ref([]);
+const usuariosOptions = ref([]);
+const loadingContratos = ref(false);
+const loadingUsuarios = ref(false);
+
+// --- LÓGICA DE OBTENCIÓN DE DATOS (Existente) ---
 const obtenerProyectos = async () => {
   isLoading.value = true;
   try {
-    // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
-    // Añadimos el objeto de configuración con los 'headers' manualmente,
-    // igual que en tu componente GestionarProyectos.vue
     const response = await api.get("/api/proyectos-desarrollo", {
       headers: { Authorization: `Bearer ${authStore.token}` },
     });
-
     proyectos.value = response.data;
   } catch (error) {
     console.error("Error al obtener los proyectos de desarrollo:", error);
-    // Considera añadir una notificación de error para el usuario aquí
+    $q.notify({
+      type: "negative",
+      message: "No se pudieron cargar los proyectos.",
+    });
   } finally {
     isLoading.value = false;
   }
 };
 
-// --- FUNCIONES DE NAVEGACIÓN ---
-const irACrearProyecto = () => {
-  router.push("/desarrollo/proyectos/crear");
+// --- NUEVAS FUNCIONES PARA EL DIÁLOGO ---
+
+// Carga los datos necesarios para los selectores del formulario
+const cargarDatosParaFormulario = async () => {
+  loadingContratos.value = true;
+  loadingUsuarios.value = true;
+  try {
+    // Cargar contratos
+    const resContratos = await api.get("/contratos", {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    contratosOptions.value = resContratos.data.map((c) => ({
+      label: `${c.descripcion} (Cliente: ${c.cliente?.nombre || "N/A"})`,
+      value: c._id,
+    }));
+
+    // Cargar usuarios
+    const resUsuarios = await api.get("/auth/usuarios", {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    usuariosOptions.value = resUsuarios.data.map((u) => ({
+      label: `${u.nombres} ${u.apellidos}`,
+      value: u._id,
+    }));
+  } catch (error) {
+    console.error("Error al cargar datos para el formulario:", error);
+    $q.notify({
+      type: "negative",
+      message: "Error al cargar datos para los selectores.",
+    });
+  } finally {
+    loadingContratos.value = false;
+    loadingUsuarios.value = false;
+  }
 };
 
+const abrirModalCrear = () => {
+  // Resetea el formulario a su estado inicial
+  nuevoProyectoForm.value = {
+    nombre: "",
+    descripcion: "",
+    contratoId: null,
+    liderTecnicoId: null,
+    equipoDesarrolloIds: [],
+    fechaInicioEstimada: "",
+    fechaFinEstimada: "",
+  };
+  // Carga los datos para los selectores
+  cargarDatosParaFormulario();
+  // Muestra el diálogo
+  mostrarModalCrear.value = true;
+};
+
+const guardarNuevoProyecto = async () => {
+  isSubmitting.value = true;
+  try {
+    // Llama a la API para crear el proyecto. La respuesta contiene el nuevo proyecto.
+    const response = await api.post(
+      "/api/proyectos-desarrollo",
+      nuevoProyectoForm.value,
+      {
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      },
+    );
+
+    $q.notify({ type: "positive", message: "Proyecto creado con éxito." });
+
+    // --- CAMBIOS CLAVE AQUÍ ---
+
+    // 1. Añadimos el nuevo proyecto directamente a nuestra lista reactiva.
+    //    Esto es mucho más rápido y eficiente que volver a pedir la lista completa a la API.
+    //    Tu backend devuelve el nuevo proyecto en `response.data.proyectoDesarrollo`.
+    proyectos.value.unshift(response.data.proyectoDesarrollo);
+
+    // 2. Cerramos el diálogo.
+    mostrarModalCrear.value = false;
+
+    // Ya no es necesario llamar a obtenerProyectos() aquí, lo que evita una llamada extra a la API.
+    // await obtenerProyectos(); // Comentamos o eliminamos esta línea.
+  } catch (error) {
+    console.error("Error al crear el proyecto:", error);
+    const mensajeError =
+      error.response?.data?.mensaje || "Ocurrió un error al crear el proyecto.";
+    $q.notify({ type: "negative", message: mensajeError });
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+// --- FUNCIONES DE NAVEGACIÓN Y UTILITARIAS (Existentes) ---
 const verDetalles = (proyectoId) => {
   router.push(`/desarrollo/proyectos/${proyectoId}`);
 };
-
 const irAlTablero = (proyectoId) => {
   router.push(`/desarrollo/proyectos/${proyectoId}/tablero`);
 };
-
-// --- FUNCIONES UTILITARIAS ---
 const getStatusColor = (status) => {
-  // ... (tu lógica de colores)
   switch (status) {
     case "Planificación":
       return "grey-6";
@@ -181,15 +370,30 @@ const getStatusColor = (status) => {
       return "dark";
   }
 };
-
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
   const options = { year: "numeric", month: "short", day: "numeric" };
   return new Date(dateString).toLocaleDateString("es-PE", options);
 };
 
-// --- CICLO DE VIDA ---
+// --- CICLO DE VIDA (Existente) ---
 onMounted(() => {
   obtenerProyectos();
 });
 </script>
+
+<style scoped>
+/* ... (tus estilos existentes) ... */
+.project-card {
+  transition:
+    box-shadow 0.3s,
+    transform 0.3s;
+  border: 1px solid #ddd;
+}
+.project-card:hover {
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  transform: translateY(-2px);
+}
+</style>
