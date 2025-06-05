@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="text-h5">Cartera de Clientes</div>
+        <div class="text-h5">Gestionar Prospectos</div>
         <q-btn
           label="Crear Cliente"
           color="primary"

@@ -11,6 +11,7 @@ const routes = [
         path: "/perfil",
         component: () => import("pages/Dashboard/PerfilUsuario.vue"),
       },
+      //Modulo de soporte
       {
         path: "/gestionar-usuarios",
         component: () =>
@@ -26,9 +27,25 @@ const routes = [
         component: () =>
           import("pages/Dashboard/Administrador/GestionarRoles.vue"),
       },
+      //Modulo de Ventas
       {
         path: "/gestionar-clientes",
         component: () => import("pages/Dashboard/Ventas/GestionarClientes.vue"),
+      },
+      {
+        path: "/gestionar-prospectos",
+        component: () =>
+          import("pages/Dashboard/Ventas/GestionarProspectos.vue"),
+      },
+      {
+        path: "/interacciones-clientes",
+        component: () =>
+          import("pages/Dashboard/Ventas/GestionarInteracciones.vue"),
+      },
+      {
+        path: "/gestionar-reuniones",
+        component: () =>
+          import("pages/Dashboard/Ventas/GestionarReuniones.vue"),
       },
       {
         path: "/gestionar-propuestas",
@@ -40,6 +57,7 @@ const routes = [
         component: () =>
           import("pages/Dashboard/Ventas/GestionarContratos.vue"),
       },
+      //Modulo de Desarrollo
       {
         path: "/gestionar-proyectos",
         component: () =>

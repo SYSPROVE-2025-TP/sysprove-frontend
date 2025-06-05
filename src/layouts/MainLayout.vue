@@ -95,8 +95,8 @@
 
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isVentas"
-              label="Módulo de Ventas"
-              icon="monetization_on"
+              label="Soporte de Flujo de Trabajo"
+              icon="work"
               expand-separator
             >
               <q-list>
@@ -106,18 +106,94 @@
                   </q-item-section>
                   <q-item-section> Clientes </q-item-section>
                 </q-item>
+
                 <q-item clickable v-ripple to="/gestionar-propuestas">
                   <q-item-section avatar>
-                    <q-icon name="attach_money" />
+                    <q-icon name="assignment" />
                   </q-item-section>
                   <q-item-section> Propuestas </q-item-section>
                 </q-item>
 
                 <q-item clickable v-ripple to="/gestionar-contratos">
                   <q-item-section avatar>
-                    <q-icon name="attach_money" />
+                    <q-icon name="assignment_turned_in" />
                   </q-item-section>
                   <q-item-section> Contratos </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+
+            <q-expansion-item
+              v-if="authStore.isAdmin || authStore.isVentas"
+              label="Area Comercial"
+              icon="business_center"
+              expand-separator
+            >
+              <q-list>
+                <q-item clickable v-ripple to="/gestionar-clientes">
+                  <q-item-section avatar>
+                    <q-icon name="wallet" />
+                  </q-item-section>
+                  <q-item-section> Cartera de Clientes </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/gestionar-prospectos">
+                  <q-item-section avatar>
+                    <q-icon name="person_search" />
+                  </q-item-section>
+                  <q-item-section> Registrar Prospecto </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/interacciones-clientes">
+                  <q-item-section avatar>
+                    <q-icon name="phone" />
+                  </q-item-section>
+                  <q-item-section> Interacciones </q-item-section>
+                </q-item>
+
+                <q-item clickable v-ripple to="/gestionar-reuniones">
+                  <q-item-section avatar>
+                    <q-icon name="event" />
+                  </q-item-section>
+                  <q-item-section> Gestionar Reuniones </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-icon name="assignment_ind" />
+                  </q-item-section>
+                  <q-item-section> Asignar Oportunidad </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-icon name="manage_search" />
+                  </q-item-section>
+                  <q-item-section> Detallar Oportunidad </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+            <q-expansion-item
+              v-if="authStore.isAdmin || authStore.isVentas"
+              label="Area de Preventa"
+              icon="handshake"
+              expand-separator
+            >
+              <q-list>
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-icon name="people" />
+                  </q-item-section>
+                  <q-item-section> Funcionalidad 1 </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-icon name="attach_money" />
+                  </q-item-section>
+                  <q-item-section> Funcionalidad 2 </q-item-section>
+                </q-item>
+
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-icon name="attach_money" />
+                  </q-item-section>
+                  <q-item-section> Funcionalidad 2 </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>
@@ -203,7 +279,7 @@
           </div>
         </q-img>
 
-        <div class="q-pa-md absolute-bottom-center" style="margin: auto">
+        <!-- <div class="q-pa-md absolute-bottom-center" style="margin: auto">
           <q-btn
             round
             flat
@@ -211,7 +287,7 @@
             aria-label="Cerrar Sesión"
             @click="cerrarSesion"
           />
-        </div>
+        </div> -->
       </q-drawer>
     </div>
 
