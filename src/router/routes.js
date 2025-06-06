@@ -92,6 +92,21 @@ const routes = [
         component: () =>
           import("pages/Dashboard/Ventas/GestionarBasedeConocimiento.vue"),
       },
+      {
+        path: "/enviar-cotizacion",
+        component: () =>
+          import("src/pages/Dashboard/Ventas/EnviarCotizacion.vue"),
+      },
+      {
+        path: "/gestionar-estimaciones",
+        component: () =>
+          import("src/pages/Dashboard/Ventas/GestionarEstimaciones.vue"),
+      },
+      {
+        path: "/asignar-oportunidades",
+        component: () =>
+          import("src/pages/Dashboard/Ventas/AsignarOportunidades.vue"),
+      },
       //Modulo de Desarrollo
       {
         path: "/gestionar-proyectos",

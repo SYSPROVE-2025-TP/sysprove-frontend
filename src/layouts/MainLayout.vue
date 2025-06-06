@@ -144,6 +144,7 @@
                   </q-item-section>
                   <q-item-section> Registrar Prospecto </q-item-section>
                 </q-item>
+
                 <q-item clickable v-ripple to="/interacciones-clientes">
                   <q-item-section avatar>
                     <q-icon name="phone" />
@@ -157,11 +158,18 @@
                   </q-item-section>
                   <q-item-section> Gestionar Reuniones </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple>
+                <q-item clickable v-ripple to="/asignar-oportunidades">
                   <q-item-section avatar>
                     <q-icon name="assignment_ind" />
                   </q-item-section>
                   <q-item-section> Asignar Oportunidad </q-item-section>
+                </q-item>
+
+                <q-item clickable v-ripple to="/gestionar-estimaciones">
+                  <q-item-section avatar>
+                    <q-icon name="assignment_ind" />
+                  </q-item-section>
+                  <q-item-section> Gestionar Estimaciones </q-item-section>
                 </q-item>
                 <q-item clickable v-ripple>
                   <q-item-section avatar>
@@ -196,6 +204,12 @@
                   <q-item-section>
                     Visualizar Pipeline de Ventas
                   </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/enviar-cotizacion">
+                  <q-item-section avatar>
+                    <q-icon name="send" />
+                  </q-item-section>
+                  <q-item-section> Enviar Cotizacion </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>
