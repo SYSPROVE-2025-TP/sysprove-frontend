@@ -206,11 +206,13 @@
               expand-separator
             >
               <q-list>
-                <q-item clickable v-ripple>
+                <q-item clickable v-ripple to="/gestionar-base-conocimientos">
                   <q-item-section avatar>
                     <q-icon name="people" />
                   </q-item-section>
-                  <q-item-section> Funcionalidad 1 </q-item-section>
+                  <q-item-section>
+                    Gestiona base de conocimientos
+                  </q-item-section>
                 </q-item>
                 <q-item clickable v-ripple>
                   <q-item-section avatar>

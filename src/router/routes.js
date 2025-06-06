@@ -87,6 +87,11 @@ const routes = [
         component: () =>
           import("pages/Dashboard/Ventas/GestionarDocumentosRelevantes.vue"),
       },
+      {
+        path: "/gestionar-base-conocimientos",
+        component: () =>
+          import("pages/Dashboard/Ventas/GestionarBasedeConocimiento.vue"),
+      },
       //Modulo de Desarrollo
       {
         path: "/gestionar-proyectos",
