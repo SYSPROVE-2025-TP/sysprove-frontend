@@ -145,17 +145,17 @@
                   <q-item-section> Interacciones </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple to="/gestionar-reuniones">
+                <!-- <q-item clickable v-ripple to="/gestionar-reuniones">
                   <q-item-section avatar>
                     <q-icon name="event" />
                   </q-item-section>
                   <q-item-section> Gestionar Reuniones </q-item-section>
-                </q-item>
+                </q-item> -->
                 <q-item clickable v-ripple to="/gestionar-oportunidades">
                   <q-item-section avatar>
                     <q-icon name="insights" />
                   </q-item-section>
-                  <q-item-section> Gestionar Oportunidades </q-item-section>
+                  <q-item-section> Documentar Requerimientos </q-item-section>
                 </q-item>
                 <q-item clickable v-ripple to="/asignar-oportunidades">
                   <q-item-section avatar>

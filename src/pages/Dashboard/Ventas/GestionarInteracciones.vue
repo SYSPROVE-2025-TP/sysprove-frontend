@@ -1,108 +1,130 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="q-gutter-md">
-      <div class="row items-center justify-between">
-        <div class="text-h5">Interacciones Cliente</div>
-        <q-btn
-          label="Añadir Interacción +"
-          color="primary"
-          @click="abrirDialogo"
-        />
-      </div>
+    <div class="row justify-between items-center q-mb-md">
+      <div class="text-h5">Registro de Interacciones con Clientes</div>
+      <q-btn label="Crear Interacción" color="primary" @click="abrirDialogo" />
+    </div>
 
-      <q-table
-        :rows="interacciones"
-        :columns="columnas"
-        row-key="id"
-        flat
+    <div class="row justify-center q-gutter-lg">
+      <q-card
+        v-for="interaccion in interacciones"
+        :key="interaccion._id"
+        class="col-12 col-sm-6 col-md-4 col-lg-3 q-mb-lg"
         bordered
-        no-data-label="No hay interacciones registradas"
+        flat
+        style="min-height: 200px"
       >
-        <template v-slot:body-cell-acciones="props">
-          <q-td align="center">
-            <q-btn
-              icon="edit"
-              dense
-              flat
-              round
-              color="primary"
-              @click="editarInteraccion(props.row)"
-            />
-            <q-btn
-              icon="delete"
-              dense
-              flat
-              round
-              color="negative"
-              @click="eliminarInteraccion(props.row.id)"
-            />
-          </q-td>
-        </template>
-      </q-table>
+        <q-card-section>
+          <div class="text-subtitle1">{{ interaccion.nombre }}</div>
+          <div class="text-caption text-grey">
+            {{ interaccion.empresa }} • {{ interaccion.email }}
+          </div>
+        </q-card-section>
 
-      <q-dialog v-model="dialogoActivo">
-        <q-card style="min-width: 500px">
-          <q-card-section>
-            <div class="text-h6">
-              {{ modoEdicion ? "Editar Interacción" : "Nueva Interacción" }}
-            </div>
-          </q-card-section>
+        <q-card-section>
+          <q-badge color="primary" class="q-mr-sm">{{
+            interaccion.tipo
+          }}</q-badge>
+          <q-badge color="secondary">
+            {{ formatearFecha(interaccion.fecha) }}
+          </q-badge>
+          <div class="q-mt-sm">{{ interaccion.resumen }}</div>
+        </q-card-section>
 
-          <q-card-section class="q-gutter-sm">
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            color="primary"
+            icon="edit"
+            @click="editar(interaccion)"
+          />
+          <q-btn
+            flat
+            color="negative"
+            icon="delete"
+            @click="eliminar(interaccion._id)"
+          />
+        </q-card-actions>
+      </q-card>
+    </div>
+
+    <!-- Diálogo con formulario -->
+    <q-dialog v-model="dialogoVisible" persistent>
+      <q-card style="min-width: 400px; max-width: 90vw">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">
+            {{ form._id ? "Editar Interacción" : "Nueva Interacción" }}
+          </div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section>
+          <q-form @submit.prevent="guardarInteraccion">
             <q-input
+              filled
               v-model="form.nombre"
-              label="Nombre y Apellido"
-              outlined
-              dense
-            />
-            <q-input v-model="form.empresa" label="Empresa" outlined dense />
-            <q-input v-model="form.email" label="Email" outlined dense />
-            <q-select
-              v-model="form.tipo"
-              :options="['Llamada', 'Reunión', 'Email']"
-              label="Tipo de Interacción"
-              outlined
-              dense
+              label="Nombre"
+              class="q-mb-sm"
             />
             <q-input
+              filled
+              v-model="form.empresa"
+              label="Empresa"
+              class="q-mb-sm"
+            />
+            <q-input
+              filled
+              v-model="form.email"
+              label="Correo Electrónico"
+              type="email"
+              class="q-mb-sm"
+            />
+            <q-select
+              filled
+              v-model="form.tipo"
+              :options="tipos"
+              label="Tipo de Interacción"
+              class="q-mb-sm"
+            />
+            <q-input
+              filled
               v-model="form.fecha"
               label="Fecha"
               type="date"
-              outlined
-              dense
+              class="q-mb-sm"
             />
             <q-input
+              filled
               v-model="form.resumen"
               label="Resumen"
               type="textarea"
-              outlined
-              dense
+              class="q-mb-sm"
             />
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="Cancelar" v-close-popup />
-            <q-btn
-              color="primary"
-              label="Guardar"
-              @click="guardarInteraccion"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </div>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancelar" v-close-popup />
+              <q-btn label="Guardar" type="submit" color="primary" />
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useQuasar } from "quasar";
+import axios from "axios";
 
-const dialogoActivo = ref(false);
-const modoEdicion = ref(false);
+const $q = useQuasar();
 const interacciones = ref([]);
+const dialogoVisible = ref(false);
+
+const tipos = ["Llamada", "Reunión", "Correo", "Otro"];
 
 const form = ref({
-  id: null,
+  _id: null,
   nombre: "",
   empresa: "",
   email: "",
@@ -112,25 +134,50 @@ const form = ref({
 });
 
 const columnas = [
-  { name: "nombre", label: "Nombre", field: "nombre", align: "left" },
-  { name: "empresa", label: "Empresa", field: "empresa", align: "left" },
-  { name: "email", label: "Email", field: "email", align: "left" },
-  { name: "tipo", label: "Tipo", field: "tipo", align: "left" },
-  {
-    name: "fecha",
-    label: "Fecha",
-    field: "fecha",
-    align: "left",
-    sortable: true,
-  },
-  { name: "resumen", label: "Resumen", field: "resumen", align: "left" },
-  { name: "acciones", label: "Acciones", align: "center" },
+  /* ya no se usan en esta versión basada en cards, puedes eliminarlas si no usas q-table */
 ];
 
 const abrirDialogo = () => {
-  modoEdicion.value = false;
+  limpiarFormulario();
+  dialogoVisible.value = true;
+};
+
+const cargarInteracciones = async () => {
+  const res = await axios.get("http://localhost:4000/interacciones");
+  interacciones.value = res.data;
+};
+
+const guardarInteraccion = async () => {
+  if (form.value._id) {
+    await axios.put(
+      `http://localhost:4000/interacciones/${form.value._id}`,
+      form.value,
+    );
+    $q.notify({ type: "positive", message: "Interacción actualizada" });
+  } else {
+    await axios.post("http://localhost:4000/interacciones", form.value);
+    $q.notify({ type: "positive", message: "Interacción guardada" });
+  }
+  limpiarFormulario();
+  dialogoVisible.value = false;
+  cargarInteracciones();
+};
+
+const editar = (row) => {
+  form.value = { ...row };
+  form.value.fecha = form.value.fecha.substring(0, 10); // formato yyyy-MM-dd
+  dialogoVisible.value = true;
+};
+
+const eliminar = async (id) => {
+  await axios.delete(`http://localhost:4000/interacciones/${id}`);
+  $q.notify({ type: "negative", message: "Interacción eliminada" });
+  cargarInteracciones();
+};
+
+const limpiarFormulario = () => {
   form.value = {
-    id: null,
+    _id: null,
     nombre: "",
     empresa: "",
     email: "",
@@ -138,27 +185,27 @@ const abrirDialogo = () => {
     fecha: "",
     resumen: "",
   };
-  dialogoActivo.value = true;
 };
 
-const editarInteraccion = (interaccion) => {
-  modoEdicion.value = true;
-  form.value = { ...interaccion };
-  dialogoActivo.value = true;
+const formatearFecha = (fechaStr) => {
+  const fecha = new Date(fechaStr);
+  return fecha.toLocaleDateString();
 };
 
-const guardarInteraccion = () => {
-  if (modoEdicion.value) {
-    const index = interacciones.value.findIndex((i) => i.id === form.value.id);
-    if (index !== -1) interacciones.value[index] = { ...form.value };
-  } else {
-    form.value.id = Date.now();
-    interacciones.value.push({ ...form.value });
-  }
-  dialogoActivo.value = false;
-};
-
-const eliminarInteraccion = (id) => {
-  interacciones.value = interacciones.value.filter((i) => i.id !== id);
-};
+onMounted(() => {
+  cargarInteracciones();
+});
 </script>
+
+<style scoped>
+.q-card {
+  transition: box-shadow 0.2s ease-in-out;
+}
+.q-card:hover {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+}
+.q-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+</style>

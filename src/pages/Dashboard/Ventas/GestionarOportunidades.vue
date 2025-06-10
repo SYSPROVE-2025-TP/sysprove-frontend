@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-xl bg-grey-1">
     <div class="column items-center q-gutter-md">
-      <div class="text-h5">Oportunidad asignada</div>
+      <div class="text-h5">Documentar requerimientos tecnicos del cliente</div>
 
       <q-card
         class="q-pa-lg shadow-2 bg-white"
