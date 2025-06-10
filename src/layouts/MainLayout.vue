@@ -157,18 +157,13 @@
                   </q-item-section>
                   <q-item-section> Documentar Requerimientos </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/asignar-oportunidades">
-                  <q-item-section avatar>
-                    <q-icon name="assignment_ind" />
-                  </q-item-section>
-                  <q-item-section> Asignar Oportunidad </q-item-section>
-                </q-item>
-                <q-item clickable v-ripple to="/gestionar-propuestas">
+
+                <!-- <q-item clickable v-ripple to="/gestionar-propuestas">
                   <q-item-section avatar>
                     <q-icon name="assignment" />
                   </q-item-section>
                   <q-item-section> Propuestas Tecnicas </q-item-section>
-                </q-item>
+                </q-item> -->
                 <q-item clickable v-ripple to="/gestionar-estimaciones">
                   <q-item-section avatar>
                     <q-icon name="assignment_ind" />
@@ -181,14 +176,14 @@
                   </q-item-section>
                   <q-item-section> Detallar Oportunidad </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/aprobar-propuesta">
+                <!-- <q-item clickable v-ripple to="/aprobar-propuesta">
                   <q-item-section avatar>
                     <q-icon name="sell" />
                   </q-item-section>
                   <q-item-section>
                     Aprobar Descuentos especiales
                   </q-item-section>
-                </q-item>
+                </q-item> -->
                 <q-item clickable v-ripple to="/reporte-ventas">
                   <q-item-section avatar>
                     <q-icon name="sell" />
@@ -203,7 +198,7 @@
                 </q-item>
                 <q-item clickable v-ripple to="/vizualizar-pipeline-ventas">
                   <q-item-section avatar>
-                    <q-icon name="eye" />
+                    <q-icon name="filter_list" />
                   </q-item-section>
                   <q-item-section>
                     Visualizar Pipeline de Ventas
@@ -224,6 +219,12 @@
               expand-separator
             >
               <q-list>
+                <q-item clickable v-ripple to="/asignar-oportunidades">
+                  <q-item-section avatar>
+                    <q-icon name="assignment_ind" />
+                  </q-item-section>
+                  <q-item-section> Asignar Oportunidad </q-item-section>
+                </q-item>
                 <q-expansion-item
                   v-if="authStore.isAdmin || authStore.isVentas"
                   label="Propuestas tecnicas"

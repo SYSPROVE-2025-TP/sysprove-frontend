@@ -96,6 +96,7 @@ export default configure((ctx) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
+      iconSet: "fontawesome-v6",
       config: {},
 
       // iconSet: 'material-icons', // Quasar icon set
