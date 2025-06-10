@@ -13,59 +13,93 @@
 
               <q-form @submit.prevent="iniciarSesion" class="q-gutter-md">
                 <q-input
-                  filled
                   v-model="correo"
                   label="Correo"
-                  dense
-                  lazy-rules
+                  outlined
                   :rules="[
-                    (val) =>
-                      (val && val.length > 0) ||
-                      'Por favor ingrese su correo electrónico',
-                  ]"
-                />
-                <q-input
-                  filled
-                  dense
-                  type="password"
-                  v-model="contrasena"
-                  label="Contraseña"
-                  :rules="[
-                    (val) =>
-                      (val && val.length > 0) ||
-                      'Por favor ingrese su contraseña',
+                    (val) => (val && val.length > 0) || 'Ingrese su correo',
                   ]"
                 >
+                  <template v-slot:prepend>
+                    <q-icon name="email" />
+                  </template>
+                </q-input>
+                <q-input
+                  :type="verPassword ? 'text' : 'password'"
+                  outlined
+                  v-model="contrasena"
+                  label="Contraseña"
+                  lazy-rules="[(val) => !!val || 'Ingrese su contraseña']"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="password" />
+                  </template>
                   <template v-slot:append>
-                    <q-icon name="visibility_off" class="cursor-pointer" />
+                    <q-icon
+                      :name="verPassword ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="verPassword = !verPassword"
+                    />
                   </template>
                 </q-input>
 
-                <div class="text-right q-mb-sm">
+                <div class="text-right">
                   <q-btn
+                    label="¿Olvidaste la contraseña?"
                     flat
                     dense
-                    label="¿Olvidaste la contraseña?"
+                    color="orange-9"
                     to="/restablecer-contraseña"
-                    color="orange-7"
-                    class="text-caption"
+                    class="q-mb-sm"
                   />
                 </div>
 
                 <q-btn
-                  label="Iniciar Sesion"
+                  label="INICIAR SESION"
                   type="submit"
-                  color="green-8"
-                  class="full-width"
+                  color="green-7"
+                  class="full-width q-mb-lg"
                 />
-              </q-form>
 
-              <div class="row justify-around q-mt-md">
-                <q-btn round flat icon="fab fa-google" />
-                <q-btn round flat icon="fab fa-apple" />
-                <q-btn round flat icon="fab fa-facebook" />
-                <q-btn round flat icon="fab fa-twitter" />
-              </div>
+                <div class="q-mt-md text-center text-caption text-grey-8">
+                  O también puedes ingresar con
+                </div>
+
+                <div class="row justify-around q-gutter-sm q-mt-sm q-mb-md">
+                  <q-btn
+                    round
+                    flat
+                    icon="fab fa-google"
+                    color="red"
+                    class="social-btn"
+                    @click="loginSocial('google')"
+                  />
+                  <q-btn
+                    round
+                    flat
+                    icon="fab fa-apple"
+                    color="black"
+                    class="social-btn"
+                    @click="loginSocial('apple')"
+                  />
+                  <q-btn
+                    round
+                    flat
+                    icon="fab fa-facebook-f"
+                    color="blue-8"
+                    class="social-btn"
+                    @click="loginSocial('facebook')"
+                  />
+                  <q-btn
+                    round
+                    flat
+                    icon="fab fa-x-twitter"
+                    color="black"
+                    class="social-btn"
+                    @click="loginSocial('twitter')"
+                  />
+                </div>
+              </q-form>
             </div>
 
             <!-- Imagen -->
@@ -93,7 +127,13 @@ const router = useRouter();
 const authStore = useAuthStore();
 const correo = ref(null);
 const contrasena = ref(null);
+const verPassword = ref(false);
 
+const loginSocial = (provider) => {
+  console.log(`Intentando login con ${provider}...`);
+  // Aquí puedes integrar OAuth real después
+  alert(`Login con ${provider} no está implementado aún 🚧`);
+};
 const iniciarSesion = async () => {
   try {
     const response = await api.post("/auth/login", {
@@ -144,5 +184,10 @@ const iniciarSesion = async () => {
     flex-direction: column;
     padding: 2rem 1.5rem;
   }
+}
+.social-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
 }
 </style>
