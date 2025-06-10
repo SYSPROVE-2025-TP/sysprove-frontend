@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="text-h5">Gestión de Propuestas Técnicas Ventas</div>
+        <div class="text-h5">Gestión de Propuestas Técnicas</div>
         <q-btn
           label="Crear Propuesta técnica"
           color="primary"

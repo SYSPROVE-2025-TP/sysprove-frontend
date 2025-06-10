@@ -2,79 +2,89 @@
   <q-page class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="text-h5">Gestión de Propuestas Técnicas Ventas</div>
-        <q-btn
-          label="Crear Propuesta técnica"
-          color="primary"
-          @click="abrirModalCrear"
-          class="q-ml-md row justify-end"
-        />
+        <div class="text-h5">Aprobar Propuestas Técnicas</div>
       </q-card-section>
 
       <q-separator />
 
-      <!-- Filtro de Estado -->
-      <q-card-section>
-        <q-select
-          v-model="estadoFiltro"
-          :options="estados"
-          label="Filtrar por Estado"
-          filled
-          @update:model-value="filtrarPropuestas"
-        />
-      </q-card-section>
+      <!-- Sección con dos tablas lado a lado -->
+      <q-card-section class="row q-col-gutter-md">
+        <!-- Tabla de propuestas filtradas -->
+        <div class="col-12 col-md-6">
+          <div class="text-subtitle1 q-mb-sm">Todas las propuestas</div>
+          <q-table
+            :rows="propuestasFiltradas"
+            :columns="columnas"
+            row-key="_id"
+            no-data-label="No hay propuestas disponibles"
+          >
+            <template v-slot:body-cell-acciones="props">
+              <q-td :props="props">
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="edit"
+                  color="primary"
+                  @click="editarPropuesta(props.row)"
+                />
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="delete"
+                  color="negative"
+                  @click="mostrarConfirmacionEliminar(props.row)"
+                />
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="rule"
+                  color="accent"
+                  label="Estado"
+                  @click="cambiarEstadoPropuesta(props.row)"
+                />
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="visibility"
+                  color="secondary"
+                  label="Detalles"
+                  @click="mostrarDetallesPropuesta(props.row)"
+                  class="q-ml-md"
+                />
+              </q-td>
+            </template>
+          </q-table>
+        </div>
 
-      <q-card-section>
-        <q-table
-          :rows="propuestasFiltradas"
-          :columns="columnas"
-          row-key="_id"
-          no-data-label="No hay propuestas disponibles"
-        >
-          <template v-slot:body-cell-acciones="props">
-            <q-td :props="props">
-              <!-- Botón de Editar -->
-              <q-btn
-                flat
-                round
-                dense
-                icon="edit"
-                color="primary"
-                @click="editarPropuesta(props.row)"
-              />
-              <!-- Botón de Eliminar -->
-              <q-btn
-                flat
-                round
-                dense
-                icon="delete"
-                color="negative"
-                @click="mostrarConfirmacionEliminar(props.row)"
-              />
-              <!-- Botón de Cambiar Estado -->
-              <q-btn
-                flat
-                round
-                dense
-                icon="rule"
-                color="accent"
-                label="Estado"
-                @click="cambiarEstadoPropuesta(props.row)"
-              />
-              <!-- Botón de Detalles -->
-              <q-btn
-                flat
-                round
-                dense
-                icon="visibility"
-                color="secondary"
-                label="Detalles"
-                @click="mostrarDetallesPropuesta(props.row)"
-                class="q-ml-md"
-              />
-            </q-td>
-          </template>
-        </q-table>
+        <!-- Tabla de propuestas aprobadas -->
+        <div class="col-12 col-md-6">
+          <div class="text-subtitle1 q-mb-sm">Propuestas Aprobadas</div>
+          <q-table
+            :rows="propuestas.filter((p) => p.estado === 'Aprobada')"
+            :columns="columnas"
+            row-key="_id"
+            no-data-label="Actualmente no hay proyectos validados"
+          >
+            <template v-slot:body-cell-acciones="props">
+              <q-td :props="props">
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="visibility"
+                  color="secondary"
+                  label="Detalles"
+                  @click="mostrarDetallesPropuesta(props.row)"
+                  class="q-ml-md"
+                />
+              </q-td>
+            </template>
+          </q-table>
+        </div>
       </q-card-section>
     </q-card>
 
@@ -278,15 +288,7 @@ const columnas = [
     align: "left",
     field: (row) => row.cliente?.nombre || "Sin cliente",
   },
-  {
-    name: "descripcion",
-    label: "Descripción",
-    align: "left",
-    field: "descripcion",
-  },
   { name: "monto", label: "Monto", align: "left", field: "monto" },
-  { name: "fechaInicio", label: "Inicio", align: "left", field: "fechaInicio" },
-  { name: "fechaFin", label: "Fin", align: "left", field: "fechaFin" },
   { name: "estado", label: "Estado", align: "left", field: "estado" },
   { name: "acciones", label: "Acciones", align: "center" },
 ];
