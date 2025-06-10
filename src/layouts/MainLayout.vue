@@ -312,6 +312,13 @@
                   <q-item-section> Contratos </q-item-section>
                 </q-item>
               </q-list>
+
+              <q-item clickable v-ripple to="/interacciones-clientes">
+                <q-item-section avatar>
+                  <q-icon name="phone_in_talk" />
+                </q-item-section>
+                <q-item-section> Interacciones con Clientes </q-item-section>
+              </q-item>
             </q-expansion-item>
 
             <q-expansion-item
