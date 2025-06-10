@@ -169,7 +169,7 @@ const formulario = ref({
 });
 
 const columnas = [
-  { name: "id", label: "ID", align: "left", field: "_id" },
+  // { name: "id", label: "ID", align: "left", field: "_id" },
   { name: "nombre", label: "Nombre", align: "left", field: "nombre" },
   { name: "estado", label: "Estado", align: "left" },
   { name: "acciones", label: "Acción", align: "center" },

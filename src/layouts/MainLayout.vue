@@ -109,13 +109,6 @@
                   <q-item-section> Clientes </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple to="/gestionar-propuestas">
-                  <q-item-section avatar>
-                    <q-icon name="assignment" />
-                  </q-item-section>
-                  <q-item-section> Propuestas </q-item-section>
-                </q-item>
-
                 <q-item clickable v-ripple to="/gestionar-contratos">
                   <q-item-section avatar>
                     <q-icon name="assignment_turned_in" />
@@ -142,7 +135,7 @@
                   <q-item-section avatar>
                     <q-icon name="person_search" />
                   </q-item-section>
-                  <q-item-section> Registrar Prospecto </q-item-section>
+                  <q-item-section> Registrar Prospecto / Lead </q-item-section>
                 </q-item>
 
                 <q-item clickable v-ripple to="/interacciones-clientes">
@@ -158,13 +151,24 @@
                   </q-item-section>
                   <q-item-section> Gestionar Reuniones </q-item-section>
                 </q-item>
+                <q-item clickable v-ripple to="/gestionar-oportunidades">
+                  <q-item-section avatar>
+                    <q-icon name="insights" />
+                  </q-item-section>
+                  <q-item-section> Gestionar Oportunidades </q-item-section>
+                </q-item>
                 <q-item clickable v-ripple to="/asignar-oportunidades">
                   <q-item-section avatar>
                     <q-icon name="assignment_ind" />
                   </q-item-section>
                   <q-item-section> Asignar Oportunidad </q-item-section>
                 </q-item>
-
+                <q-item clickable v-ripple to="/gestionar-propuestas">
+                  <q-item-section avatar>
+                    <q-icon name="assignment" />
+                  </q-item-section>
+                  <q-item-section> Propuestas Tecnicas </q-item-section>
+                </q-item>
                 <q-item clickable v-ripple to="/gestionar-estimaciones">
                   <q-item-section avatar>
                     <q-icon name="assignment_ind" />
@@ -220,6 +224,27 @@
               expand-separator
             >
               <q-list>
+                <q-expansion-item
+                  v-if="authStore.isAdmin || authStore.isVentas"
+                  label="Propuestas tecnicas"
+                  icon="integration_instructions"
+                  expand-separator
+                >
+                  <q-item clickable v-ripple to="/gestionar-propuestas">
+                    <q-item-section avatar>
+                      <q-icon name="attach_money" />
+                    </q-item-section>
+                    <q-item-section> Propuestas Tecnicas </q-item-section>
+                  </q-item>
+
+                  <q-item clickable v-ripple to="/aprobar-propuesta">
+                    <q-item-section avatar>
+                      <q-icon name="attach_money" />
+                    </q-item-section>
+                    <q-item-section> Aprobar Propuesta Tecnica</q-item-section>
+                  </q-item>
+                </q-expansion-item>
+
                 <q-item clickable v-ripple to="/gestionar-base-conocimientos">
                   <q-item-section avatar>
                     <q-icon name="people" />

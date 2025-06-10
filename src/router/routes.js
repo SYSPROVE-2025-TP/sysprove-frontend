@@ -107,6 +107,11 @@ const routes = [
         component: () =>
           import("src/pages/Dashboard/Ventas/AsignarOportunidades.vue"),
       },
+      {
+        path: "/gestionar-oportunidades",
+        component: () =>
+          import("src/pages/Dashboard/Ventas/GestionarOportunidades.vue"),
+      },
       //Modulo de Desarrollo
       {
         path: "/gestionar-proyectos",
