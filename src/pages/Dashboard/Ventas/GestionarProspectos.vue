@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="text-h5">Cartera de Clientes</div>
+        <div class="text-h5">Gestionar Prospectos</div>
         <q-btn
           label="Crear Cliente"
           color="primary"
@@ -37,7 +37,7 @@
                 color="negative"
                 @click="mostrarConfirmacionEliminar(props.row)"
               />
-              <!-- <q-btn
+              <q-btn
                 flat
                 round
                 dense
@@ -45,7 +45,7 @@
                 color="accent"
                 @click="abrirEvaluacion(props.row)"
                 label="Evaluar"
-              /> -->
+              />
             </q-td>
           </template>
         </q-table>
@@ -97,7 +97,7 @@
             lazy-rules
             :rules="[(val) => !!val || 'Este campo es obligatorio']"
           />
-          <!-- <q-select
+          <q-select
             v-model="clienteForm.usuariosAsociados"
             :options="usuariosOptions"
             label="Usuarios Asociados"
@@ -111,7 +111,7 @@
                 (val && val.length > 0) ||
                 'Debe seleccionar al menos un usuario asociado',
             ]"
-          /> -->
+          />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="negative" @click="cerrarModal" />
@@ -148,7 +148,7 @@
       </q-card>
     </q-dialog>
 
-    <!-- Diálogo de Evaluación
+    <!-- Diálogo de Evaluación -->
     <q-dialog v-model="mostrarEvaluacion">
       <q-card style="width: 600px; max-width: 90vw; padding: 20px">
         <q-card-section>
@@ -193,7 +193,7 @@
           />
         </q-card-actions>
       </q-card>
-    </q-dialog> -->
+    </q-dialog>
   </q-page>
 </template>
 
