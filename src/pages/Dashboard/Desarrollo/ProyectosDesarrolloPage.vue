@@ -21,6 +21,7 @@
       <q-spinner-dots color="primary" size="40px" />
       <div class="q-ml-md text-grey-8">Cargando proyectos...</div>
     </div>
+
     <div
       v-else-if="!isLoading && proyectos.length === 0"
       class="text-center q-my-xl"
@@ -61,7 +62,9 @@
               </div>
             </div>
           </q-card-section>
+
           <q-separator />
+
           <q-card-section>
             <div class="text-caption text-grey">Equipo Principal</div>
             <q-list dense>
@@ -81,6 +84,7 @@
               </q-item>
             </q-list>
           </q-card-section>
+
           <q-card-section class="q-pt-none">
             <div class="text-caption text-grey">Fechas Clave</div>
             <div class="row text-body2">
@@ -94,6 +98,7 @@
               </div>
             </div>
           </q-card-section>
+
           <q-card-actions align="right">
             <q-btn flat color="primary" @click.stop="irAlTablero(proyecto._id)"
               >Ir al Tablero</q-btn
@@ -109,6 +114,11 @@
       </div>
     </div>
 
+    <q-dialog v-model="mostrarModalCrear">
+      <q-card style="width: 700px; max-width: 90vw">
+        <q-form @submit.prevent="guardarNuevoProyecto"> </q-form>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="mostrarModalCrear">
       <q-card style="width: 700px; max-width: 90vw">
         <q-form @submit.prevent="guardarNuevoProyecto">
@@ -202,23 +212,115 @@
         </q-form>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="mostrarModalDetalles">
+      <q-card style="width: 900px; max-width: 95vw">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6 ellipsis">
+            {{ proyectoSeleccionado?.nombre || "Cargando..." }}
+          </div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <div
+          v-if="isLoadingDetalle"
+          class="flex flex-center"
+          style="height: 400px"
+        >
+          <q-spinner-dots color="primary" size="50px" />
+        </div>
+
+        <div v-else-if="proyectoSeleccionado">
+          <q-tabs
+            v-model="tabDetalle"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+          >
+            <q-tab name="general" label="Información General" icon="info" />
+            <q-tab name="backlog" label="Product Backlog" icon="list_alt" />
+            <q-tab name="sprints" label="Sprints" icon="loop" />
+          </q-tabs>
+
+          <q-separator />
+
+          <q-tab-panels v-model="tabDetalle" animated>
+            <q-tab-panel name="general">
+              <div class="text-h6 q-mb-md">Detalles del Proyecto</div>
+              <q-list bordered separator>
+                <q-item
+                  ><q-item-section
+                    ><q-item-label overline>Cliente</q-item-label
+                    ><q-item-label>{{
+                      proyectoSeleccionado.cliente?.nombre
+                    }}</q-item-label></q-item-section
+                  ></q-item
+                >
+                <q-item
+                  ><q-item-section
+                    ><q-item-label overline>Contrato</q-item-label
+                    ><q-item-label caption>{{
+                      proyectoSeleccionado.contrato?.descripcion
+                    }}</q-item-label></q-item-section
+                  ></q-item
+                >
+                <q-item
+                  ><q-item-section
+                    ><q-item-label overline>Líder Técnico</q-item-label
+                    ><q-item-label
+                      >{{ proyectoSeleccionado.liderTecnico?.nombres }}
+                      {{
+                        proyectoSeleccionado.liderTecnico?.apellidos
+                      }}</q-item-label
+                    ></q-item-section
+                  ></q-item
+                >
+                <q-item
+                  ><q-item-section
+                    ><q-item-label overline>Equipo</q-item-label
+                    ><q-item-label
+                      ><q-chip
+                        v-for="miembro in proyectoSeleccionado.equipoDesarrollo"
+                        :key="miembro._id"
+                        icon="person"
+                        :label="`${miembro.nombres} ${miembro.apellidos}`"
+                        color="secondary"
+                        text-color="white"
+                        class="q-mr-sm q-mb-sm" /></q-item-label></q-item-section
+                ></q-item>
+              </q-list>
+            </q-tab-panel>
+            <q-tab-panel name="backlog"
+              ><div class="text-h6">Product Backlog</div>
+              <p>Aquí se gestionarán los Backlog Items.</p></q-tab-panel
+            >
+            <q-tab-panel name="sprints"
+              ><div class="text-h6">Sprints</div>
+              <p>Aquí se gestionarán los Sprints.</p></q-tab-panel
+            >
+          </q-tab-panels>
+        </div>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useQuasar } from "quasar"; // Para usar notificaciones
+import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth";
 import api from "../../../api";
 
 const router = useRouter();
-const $q = useQuasar(); // Instancia de Quasar
+const $q = useQuasar();
 const authStore = useAuthStore();
 const proyectos = ref([]);
 const isLoading = ref(true);
 
-// --- NUEVAS VARIABLES DE ESTADO PARA EL DIÁLOGO ---
+// --- ESTADO PARA DIÁLOGO DE CREACIÓN (EXISTENTE) ---
 const mostrarModalCrear = ref(false);
 const isSubmitting = ref(false);
 const nuevoProyectoForm = ref({
@@ -230,14 +332,18 @@ const nuevoProyectoForm = ref({
   fechaInicioEstimada: "",
   fechaFinEstimada: "",
 });
-
-// Opciones para los selectores del formulario
 const contratosOptions = ref([]);
 const usuariosOptions = ref([]);
 const loadingContratos = ref(false);
 const loadingUsuarios = ref(false);
 
-// --- LÓGICA DE OBTENCIÓN DE DATOS (Existente) ---
+// --- NUEVAS VARIABLES DE ESTADO PARA DIÁLOGO DE DETALLES ---
+const mostrarModalDetalles = ref(false);
+const isLoadingDetalle = ref(false);
+const proyectoSeleccionado = ref(null);
+const tabDetalle = ref("general");
+
+// --- LÓGICA DE OBTENCIÓN DE DATOS (EXISTENTE) ---
 const obtenerProyectos = async () => {
   isLoading.value = true;
   try {
@@ -256,8 +362,7 @@ const obtenerProyectos = async () => {
   }
 };
 
-// --- NUEVAS FUNCIONES PARA EL DIÁLOGO ---
-
+// --- FUNCIONES PARA DIÁLOGO DE CREACIÓN (EXISTENTE) ---
 // Carga los datos necesarios para los selectores del formulario
 const cargarDatosParaFormulario = async () => {
   loadingContratos.value = true;
@@ -308,7 +413,6 @@ const abrirModalCrear = () => {
   // Muestra el diálogo
   mostrarModalCrear.value = true;
 };
-
 const guardarNuevoProyecto = async () => {
   isSubmitting.value = true;
   try {
@@ -345,13 +449,42 @@ const guardarNuevoProyecto = async () => {
   }
 };
 
-// --- FUNCIONES DE NAVEGACIÓN Y UTILITARIAS (Existentes) ---
+// --- FUNCIONES DE NAVEGACIÓN (MODIFICADA Y NUEVA) ---
+
+// ANTERIORMENTE: esta función navegaba a otra página.
+// AHORA: abre el diálogo de detalles.
 const verDetalles = (proyectoId) => {
-  router.push(`/desarrollo/proyectos/${proyectoId}`);
+  tabDetalle.value = "general";
+  mostrarModalDetalles.value = true;
+  cargarDetallesProyecto(proyectoId);
 };
+
 const irAlTablero = (proyectoId) => {
   router.push(`/desarrollo/proyectos/${proyectoId}/tablero`);
 };
+
+// NUEVA FUNCIÓN PARA CARGAR LOS DETALLES DEL PROYECTO SELECCIONADO
+const cargarDetallesProyecto = async (proyectoId) => {
+  isLoadingDetalle.value = true;
+  proyectoSeleccionado.value = null;
+  try {
+    const response = await api.get(`/api/proyectos-desarrollo/${proyectoId}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    proyectoSeleccionado.value = response.data;
+  } catch (error) {
+    console.error("Error al cargar los detalles del proyecto:", error);
+    $q.notify({
+      type: "negative",
+      message: "No se pudieron cargar los detalles del proyecto.",
+    });
+    mostrarModalDetalles.value = false;
+  } finally {
+    isLoadingDetalle.value = false;
+  }
+};
+
+// --- FUNCIONES UTILITARIAS (EXISTENTES) ---
 const getStatusColor = (status) => {
   switch (status) {
     case "Planificación":
@@ -376,7 +509,7 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString("es-PE", options);
 };
 
-// --- CICLO DE VIDA (Existente) ---
+// --- CICLO DE VIDA (EXISTENTE) ---
 onMounted(() => {
   obtenerProyectos();
 });
