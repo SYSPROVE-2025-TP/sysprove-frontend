@@ -1,8 +1,12 @@
 <template>
   <q-layout view="lHh LpR lFf">
     <div>
-      <q-header class="bg-white text-primary shadow-2">
+      <q-header
+        style="background: linear-gradient(135deg, #b71c1c, #e53935)"
+        class="text-white shadow-2"
+      >
         <q-toolbar>
+          <!-- Botón del menú -->
           <q-btn
             flat
             dense
@@ -10,11 +14,25 @@
             icon="menu"
             aria-label="Menu"
             @click="toggleLeftDrawer"
-            class="q-mr-sm"
+            class="header-btn q-mr-sm"
           />
-          <q-toolbar-title class="text-h6">SYSFUN SYSTEM</q-toolbar-title>
 
-          <q-btn flat round dense to="/notificaciones-oportunidades">
+          <!-- Título -->
+          <q-toolbar-title
+            class="text-h6"
+            style="font-weight: bold; font-size: 18px"
+          >
+            SYSPROVE SYSTEM
+          </q-toolbar-title>
+
+          <!-- Notificaciones -->
+          <q-btn
+            flat
+            round
+            dense
+            to="/notificaciones-oportunidades"
+            class="header-btn"
+          >
             <q-badge
               color="red"
               floating
@@ -23,33 +41,29 @@
             />
             <q-icon name="notifications" />
           </q-btn>
+
+          <!-- Configuración -->
           <q-btn
             round
             flat
             icon="settings"
             aria-label="Settings"
-            class="q-mr-sm"
+            class="header-btn q-mr-sm"
           />
-          <q-btn round flat>
+
+          <!-- Avatar y menú -->
+          <q-btn round flat class="header-btn">
             <q-avatar size="30px">
               <img v-if="imagenUsuario" :src="imagenUsuario" />
               <img v-else src="/public/profile.svg" />
               <q-menu>
                 <div class="row no-wrap q-pa-md">
-                  <div class="column">
-                    <div class="text-h6 q-mb-md">Settings</div>
-                    <q-toggle v-model="mobileData" label="Use Mobile Data" />
-                    <q-toggle v-model="bluetooth" label="Bluetooth" />
-                  </div>
-
                   <q-separator vertical inset class="q-mx-lg" />
-
                   <div class="column items-center">
                     <q-avatar size="72px" class="q-mb-sm">
                       <img v-if="imagenUsuario" :src="imagenUsuario" />
                       <img v-else src="/public/profile.svg" />
                     </q-avatar>
-
                     <div
                       v-if="authStore.usuario"
                       class="text-subtitle1 q-mt-md q-mb-xs"
@@ -441,25 +455,36 @@
           </q-list>
         </q-scroll-area>
 
-        <q-img
+        <div
           class="absolute-top"
-          src="https://img.freepik.com/fotos-premium/imagen-fondo-empresarial-cuadros-graficos-financieros_1021632-971.jpg?w=1380"
-          style="height: 150px"
+          style="
+            height: 150px;
+            background: linear-gradient(135deg, #b71c1c, #e53935);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+          "
         >
-          <div
-            class="absolute-bottom bg-transparent"
-            style="color: darkblue; font-size: medium"
-          >
-            <q-avatar size="56px" class="q-mb-sm">
-              <img v-if="imagenUsuario" :src="imagenUsuario" />
-              <img v-else src="/public/profile.svg" />
-            </q-avatar>
-            <div v-if="authStore.usuario" class="text-weight-bold">
-              {{ authStore.usuario.nombres }} {{ authStore.usuario.apellidos }}
+          <div class="row items-center justify-center">
+            <q-img
+              src="https://media.licdn.com/dms/image/v2/D4E0BAQGri8qVkgCxqQ/company-logo_200_200/company-logo_200_200/0/1736349171028/hitss_peru_logo?e=2147483647&v=beta&t=G4_kF9RlqnC9Sn3RY8JkwX-BHA6p9uJBRUqYivTpKic"
+              style="width: 50px; height: 50px; border-radius: 8px"
+            />
+            <div
+              class="sysprove-title q-ml-sm"
+              style="
+                color: white;
+                font-weight: bold;
+                font-size: 18px;
+                transition: color 0.3s ease;
+                cursor: pointer;
+              "
+            >
+              SYSPROVE SYSTEM
             </div>
-            <div v-if="authStore.usuario">{{ authStore.usuario.correo }}</div>
           </div>
-        </q-img>
+        </div>
 
         <!-- <div class="q-pa-md absolute-bottom-center" style="margin: auto">
           <q-btn
@@ -581,5 +606,20 @@ onMounted(async () => {
 /* Espaciado en el toolbar */
 .q-toolbar {
   justify-content: space-between; /* Distribuye el contenido en la barra de herramientas */
+}
+
+.sysprove-title:hover {
+  color: #ffcdd2 !important; /* Rojo claro al pasar el mouse */
+}
+
+.header-btn {
+  color: white;
+  transition:
+    transform 0.2s ease,
+    background-color 0.3s ease;
+}
+.header-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.08);
 }
 </style>
