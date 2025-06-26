@@ -101,6 +101,7 @@
               clickable
               v-ripple
               to="/dashboard-desarrollo"
+              class="drawer-item"
             >
               <!--Dashboard Desarrollo -->
               <q-item-section avatar>
@@ -114,6 +115,7 @@
               clickable
               v-ripple
               to="/index"
+              class="drawer-item"
             >
               <q-item-section avatar>
                 <q-icon name="dashboard" />
@@ -121,7 +123,7 @@
               <q-item-section> Dashboard </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple to="/perfil">
+            <q-item clickable v-ripple to="/perfil" class="drawer-item">
               <q-item-section avatar>
                 <q-icon name="people" />
               </q-item-section>
@@ -135,7 +137,12 @@
               expand-separator
             >
               <q-list>
-                <q-item clickable v-ripple to="/gestionar-clientes">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-clientes"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="people" />
                   </q-item-section>
@@ -156,22 +163,38 @@
               label="Area Comercial"
               icon="business_center"
               expand-separator
+              class="drawer-item"
             >
               <q-list>
-                <q-item clickable v-ripple to="/gestionar-clientes">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-clientes"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="wallet" />
                   </q-item-section>
                   <q-item-section> Cartera de Clientes </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/gestionar-prospectos">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-prospectos"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="person_search" />
                   </q-item-section>
                   <q-item-section> Registrar Prospecto / Lead </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple to="/interacciones-clientes">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/interacciones-clientes"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="phone" />
                   </q-item-section>
@@ -184,7 +207,12 @@
                   </q-item-section>
                   <q-item-section> Gestionar Reuniones </q-item-section>
                 </q-item> -->
-                <q-item clickable v-ripple to="/gestionar-oportunidades">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-oportunidades"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="insights" />
                   </q-item-section>
@@ -197,13 +225,18 @@
                   </q-item-section>
                   <q-item-section> Propuestas Tecnicas </q-item-section>
                 </q-item> -->
-                <q-item clickable v-ripple to="/gestionar-estimaciones">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-estimaciones"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="assignment_ind" />
                   </q-item-section>
                   <q-item-section> Gestionar Estimaciones </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple>
+                <q-item clickable v-ripple class="drawer-item">
                   <q-item-section avatar>
                     <q-icon name="manage_search" />
                   </q-item-section>
@@ -217,19 +250,34 @@
                     Aprobar Descuentos especiales
                   </q-item-section>
                 </q-item> -->
-                <q-item clickable v-ripple to="/reporte-ventas">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/reporte-ventas"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="sell" />
                   </q-item-section>
                   <q-item-section> Reporte de ventas </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/pipeline-ventas">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/pipeline-ventas"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="sell" />
                   </q-item-section>
                   <q-item-section> Pipeline de ventas </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/vizualizar-pipeline-ventas">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/vizualizar-pipeline-ventas"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="filter_list" />
                   </q-item-section>
@@ -237,7 +285,12 @@
                     Visualizar Pipeline de Ventas
                   </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/enviar-cotizacion">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/enviar-cotizacion"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="send" />
                   </q-item-section>
@@ -261,6 +314,7 @@
               label="Area de Preventa"
               icon="handshake"
               expand-separator
+              class="drawer-item"
             >
               <q-list>
                 <q-item clickable v-ripple to="/asignar-oportunidades">
@@ -621,5 +675,19 @@ onMounted(async () => {
 .header-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
   transform: scale(1.08);
+}
+.drawer-item {
+  background-color: white;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  padding: 8px;
+  transition: background-color 0.3s ease;
+}
+.drawer-item:hover {
+  background-color: #ffe5e5; /* rojo claro suave */
+}
+.q-drawer {
+  background: linear-gradient(to bottom, #fce4ec, #ffffff); /* fondo suave */
+  padding: 12px;
 }
 </style>
