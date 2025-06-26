@@ -114,6 +114,10 @@ const routes = [
       },
       //Modulo de Desarrollo
       {
+        path: "/dashboard-desarrollo",
+        component: () => import("pages/Dashboard/Desarrollo/DashboardDev.vue"),
+      },
+      {
         path: "/gestionar-proyectos",
         component: () =>
           import("pages/Dashboard/Desarrollo/GestionarProyectos.vue"),

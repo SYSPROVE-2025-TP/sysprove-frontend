@@ -82,12 +82,31 @@
           "
         >
           <q-list padding>
-            <q-item clickable v-ripple to="/index">
+            <q-item
+              v-if="authStore.isAdmin || authStore.isDesarrollo"
+              clickable
+              v-ripple
+              to="/dashboard-desarrollo"
+            >
+              <!--Dashboard Desarrollo -->
               <q-item-section avatar>
                 <q-icon name="dashboard" />
               </q-item-section>
               <q-item-section> Dashboard </q-item-section>
             </q-item>
+
+            <q-item
+              v-if="authStore.isAdmin || authStore.isVentas"
+              clickable
+              v-ripple
+              to="/index"
+            >
+              <q-item-section avatar>
+                <q-icon name="dashboard" />
+              </q-item-section>
+              <q-item-section> Dashboard </q-item-section>
+            </q-item>
+
             <q-item clickable v-ripple to="/perfil">
               <q-item-section avatar>
                 <q-icon name="people" />
@@ -346,8 +365,8 @@
 
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isDesarrollo"
-              label="Módulo de Desarrollo"
-              icon="code"
+              label="Fabrica de Software"
+              icon="factory"
               expand-separator
             >
               <q-list>
@@ -369,6 +388,34 @@
                     <q-icon name="group" />
                   </q-item-section>
                   <q-item-section> Equipos </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+            <q-expansion-item
+              v-if="authStore.isAdmin || authStore.isDesarrollo"
+              label="Aseguramiento de Calidad (QA)"
+              icon="shield"
+              expand-separator
+            >
+              <q-list>
+                <q-item clickable v-ripple to="">
+                  <q-item-section avatar>
+                    <q-icon name="bug_report" />
+                  </q-item-section>
+                  <q-item-section> Reporte de Errores </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/desarrollo/tareas">
+                  <q-item-section avatar>
+                    <q-icon name="search" />
+                  </q-item-section>
+                  <q-item-section> Casos de Prueba </q-item-section>
+                </q-item>
+
+                <q-item clickable v-ripple to="/desarrollo/equipos">
+                  <q-item-section avatar>
+                    <q-icon name="analytics" />
+                  </q-item-section>
+                  <q-item-section> Aseguramiento de Calidad </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>
