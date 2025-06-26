@@ -491,7 +491,7 @@
                   </q-item-section>
                   <q-item-section> Reporte de Errores </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/desarrollo/tareas">
+                <q-item clickable v-ripple to="/gestionar-casos-prueba">
                   <q-item-section avatar>
                     <q-icon name="search" />
                   </q-item-section>

@@ -146,6 +146,11 @@ const routes = [
         path: "/vizualizar-pipeline-ventas",
         component: () => import("src/pages/Dashboard/PipeVentasPage.vue"),
       },
+      {
+        path: "/gestionar-casos-prueba",
+        component: () =>
+          import("src/pages/Dashboard/Desarrollo/CasosPrueba.vue"),
+      },
     ],
   },
   {
