@@ -231,6 +231,17 @@
                 </q-item>
               </q-list>
             </q-expansion-item>
+            <q-item
+              v-if="authStore.isAdmin || authStore.isVentas"
+              clickable
+              v-ripple
+              to="/feedback-ventas"
+            >
+              <q-item-section avatar>
+                <q-icon name="task" />
+              </q-item-section>
+              <q-item-section> Feedback de Desarrollo </q-item-section>
+            </q-item>
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isVentas"
               label="Area de Preventa"
@@ -381,6 +392,14 @@
                     <q-icon name="task" />
                   </q-item-section>
                   <q-item-section> Tareas </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/feedback-desarrollo">
+                  <q-item-section avatar>
+                    <q-icon name="task" />
+                  </q-item-section>
+                  <q-item-section>
+                    Feedback de proyectos de desarrollo
+                  </q-item-section>
                 </q-item>
 
                 <q-item clickable v-ripple to="/desarrollo/equipos">

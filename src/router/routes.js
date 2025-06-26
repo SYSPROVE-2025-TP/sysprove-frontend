@@ -112,10 +112,20 @@ const routes = [
         component: () =>
           import("src/pages/Dashboard/Ventas/GestionarOportunidades.vue"),
       },
+      {
+        path: "/feedback-ventas",
+        component: () =>
+          import("src/pages/Dashboard/Ventas/GestionarFeedbackDesarrollo.vue"),
+      },
       //Modulo de Desarrollo
       {
         path: "/dashboard-desarrollo",
         component: () => import("pages/Dashboard/Desarrollo/DashboardDev.vue"),
+      },
+      {
+        path: "/feedback-desarrollo",
+        component: () =>
+          import("src/pages/Dashboard/Desarrollo/EnviarFeedbackaVentas.vue"),
       },
       {
         path: "/gestionar-proyectos",
