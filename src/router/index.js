@@ -33,7 +33,14 @@ export default route(function (/* { store, ssrContext } */) {
         // Si hay un token y la ruta no es /login ni /restablecer-contraseña, permitir el acceso
         next();
       }
-    } else if (to.path === "/login" || to.path === "/restablecer-contraseña") {
+    } else if (
+      to.path === "/login" ||
+      to.path === "/restablecer-contraseña" ||
+      to.path === "/landing-page" ||
+      to.path === "/landing-page/home" ||
+      to.path === "/landing-page/servicios" ||
+      to.path === "/landing-page/contacto"
+    ) {
       // Si no hay token, pero la ruta es /login o /restablecer-contraseña, permitir el acceso
       next();
     } else {

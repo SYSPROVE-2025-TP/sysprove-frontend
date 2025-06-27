@@ -166,6 +166,28 @@ const routes = [
     path: "/restablecer-contraseña",
     component: () => import("pages/RestablecerContraseña.vue"),
   },
+  {
+    path: "/landing-page",
+    component: () => import("layouts/LandingLayout.vue"),
+    children: [
+      {
+        path: "",
+        redirect: "/landing-page/home",
+      },
+      {
+        path: "/landing-page/home",
+        component: () => import("pages/landing-page/HomePageLP.vue"),
+      },
+      {
+        path: "/landing-page/servicios",
+        component: () => import("pages/landing-page/ServiciosPage.vue"),
+      },
+      {
+        path: "/landing-page/contacto",
+        component: () => import("pages/landing-page/ContactoPage.vue"),
+      },
+    ],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
