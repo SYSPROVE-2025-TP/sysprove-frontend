@@ -1,11 +1,11 @@
 <template>
-  <q-page class="contact-page q-px-md q-pt-md q-pb-xl">
+  <q-page class="contact-page q-px-md q-pt-sm q-pb-xl">
     <!-- Título -->
     <div
       v-motion
       :initial="titleVariants.hidden"
       :enter="titleVariants.visible"
-      class="text-center text-h4 text-red-10 q-mb-md q-mt-sm font-bold"
+      class="text-center text-h4 text-red-10 q-mt-xs q-mb-md q-mb-sm font-bold"
     >
       Contáctanos
     </div>
@@ -15,7 +15,7 @@
         <q-card-section class="q-pa-none">
           <div class="row no-wrap">
             <!-- Formulario -->
-            <div class="col-12 col-md-6 q-pa-lg flex flex-center">
+            <div class="col-12 col-md-6 q-pa-md q-pa-lg-md flex flex-center">
               <q-form
                 @submit.prevent="enviarFormulario"
                 class="full-width q-gutter-md"
