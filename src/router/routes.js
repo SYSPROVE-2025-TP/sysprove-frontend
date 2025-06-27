@@ -151,6 +151,11 @@ const routes = [
         component: () =>
           import("src/pages/Dashboard/Desarrollo/CasosPrueba.vue"),
       },
+      {
+        path: "/gestionar-defectos",
+        component: () =>
+          import("src/pages/Dashboard/Desarrollo/GestionarDefectos.vue"),
+      },
     ],
   },
   {

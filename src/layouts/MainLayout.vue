@@ -485,7 +485,7 @@
               expand-separator
             >
               <q-list>
-                <q-item clickable v-ripple to="">
+                <q-item clickable v-ripple to="/gestionar-defectos">
                   <q-item-section avatar>
                     <q-icon name="bug_report" />
                   </q-item-section>
