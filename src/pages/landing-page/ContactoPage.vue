@@ -1,11 +1,11 @@
 <template>
-  <q-page class="contact-page q-pa-md q-pa-lg-xl">
-    <!-- Título con animación -->
+  <q-page class="contact-page q-px-md q-pt-md q-pb-xl">
+    <!-- Título -->
     <div
       v-motion
       :initial="titleVariants.hidden"
       :enter="titleVariants.visible"
-      class="text-center text-h4 text-red-10 q-mb-xl font-bold"
+      class="text-center text-h4 text-red-10 q-mb-md q-mt-sm font-bold"
     >
       Contáctanos
     </div>
@@ -15,24 +15,18 @@
         <q-card-section class="q-pa-none">
           <div class="row no-wrap">
             <!-- Formulario -->
-            <div
-              v-motion
-              :initial="formVariants.hidden"
-              :enter="formVariants.visible"
-              class="col-12 col-md-6 q-pa-lg flex flex-center"
-            >
+            <div class="col-12 col-md-6 q-pa-lg flex flex-center">
               <q-form
                 @submit.prevent="enviarFormulario"
                 class="full-width q-gutter-md"
-                style="max-width: 400px"
+                style="max-width: 420px"
               >
                 <q-input
                   v-model="nombre"
-                  label="Nombre"
+                  label="Nombre Completo"
                   outlined
                   dense
-                  :rules="[(val) => !!val || 'El nombre es obligatorio']"
-                  class="animated-input"
+                  :rules="[(val) => !!val || 'Requerido']"
                 />
                 <q-input
                   v-model="correo"
@@ -41,43 +35,72 @@
                   outlined
                   dense
                   :rules="[(val) => /.+@.+\..+/.test(val) || 'Correo inválido']"
-                  class="animated-input"
                 />
                 <q-input
+                  v-model="telefono"
+                  label="Número de Contacto"
+                  type="tel"
+                  outlined
+                  dense
+                  :rules="[(val) => !!val || 'Requerido']"
+                />
+                <q-input
+                  v-model="empresa"
+                  label="Empresa a la que representa"
+                  outlined
+                  dense
+                />
+
+                <!-- Servicio de interés -->
+                <q-select
+                  v-model="servicioSeleccionado"
+                  :options="Object.keys(serviciosDisponibles)"
+                  label="Servicio de Interés"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                  @update:model-value="subcategoriasSeleccionadas = []"
+                />
+
+                <!-- Subcategorías del servicio -->
+                <q-select
+                  v-if="servicioSeleccionado"
+                  v-model="subcategoriasSeleccionadas"
+                  :options="serviciosDisponibles[servicioSeleccionado]"
+                  label="Subcategorías del Servicio"
+                  multiple
+                  outlined
+                  dense
+                  use-chips
+                />
+
+                <q-input
                   v-model="mensaje"
-                  label="Mensaje"
+                  label="Mensaje Adicional"
                   type="textarea"
                   outlined
                   dense
                   autogrow
-                  :rules="[(val) => !!val || 'Escribe un mensaje']"
-                  class="animated-input"
                 />
+
+                <!-- Botón mejorado -->
                 <q-btn
-                  label="ENVIAR"
+                  label="ENVIAR MENSAJE"
                   type="submit"
                   color="red-10"
                   unelevated
-                  class="animated-button enhanced-send-button"
-                  icon-right="send"
-                  :loading="loading"
-                  :disable="loading"
+                  icon="send"
+                  class="animated-button q-mt-md full-width"
                 />
               </q-form>
             </div>
 
-            <!-- Imagen decorativa -->
+            <!-- Imagen -->
             <div
               class="col-6 bg-contact-image q-pa-lg lt-sm-hide flex flex-center"
             >
               <q-img
-                v-motion
-                :initial="{ scale: 0.5, opacity: 0 }"
-                :enter="{
-                  scale: 1,
-                  opacity: 1,
-                  transition: { type: 'spring', stiffness: 200 },
-                }"
                 src="https://media.licdn.com/dms/image/v2/D4E0BAQGri8qVkgCxqQ/company-logo_200_200/company-logo_200_200/0/1736349171028/hitss_peru_logo?e=1756339200&v=beta&t=EjxYwyYMjI-gMdFXjOi8Qy2_XcLrvok386x-ePcpST0"
                 style="width: 150px; height: 150px"
               />
@@ -88,64 +111,70 @@
     </div>
   </q-page>
 </template>
+
 <script setup>
 import { ref } from "vue";
-import { useQuasar } from "quasar";
 import { useMotionVariants } from "@vueuse/motion";
 
-const $q = useQuasar();
-
+// Inputs
 const nombre = ref("");
 const correo = ref("");
+const telefono = ref("");
+const empresa = ref("");
 const mensaje = ref("");
-const loading = ref(false);
+const servicioSeleccionado = ref(null);
+const subcategoriasSeleccionadas = ref([]);
 
-function enviarFormulario() {
-  if (!nombre.value || !correo.value || !mensaje.value) return;
+// Servicios y subcategorías (puedes extender esto)
+const serviciosDisponibles = {
+  "PRÁCTICAS TECNOLÓGICAS": [
+    "CRM",
+    "ERP",
+    "AMS & Observability",
+    "Cybersecurity",
+    "Field Services",
+    "Hyper-Automation",
+  ],
+  "PRODUCTOS DIGITALES": ["Cross Industry Solutions", "Industry Specialized"],
+  CONSULTORÍA: [
+    "Adopción de IA",
+    "Design Thinking & Ideation",
+    "Digital Transformation",
+    "Customer Experience (CX)",
+    "Business Optimization (BPO)",
+  ],
+  "SECTORES INDUSTRIALES": [
+    "Agribusiness",
+    "Smart Cities & Communities",
+    "Banking & Financial Services",
+    "Mining & Natural Resources",
+    "Hospitality",
+    "Manufacturing",
+    "Retail",
+  ],
+};
 
-  // Evitar múltiples envíos
-  if (loading.value) return;
-
-  loading.value = true;
-
-  // Simulación de envío (reemplaza con API real luego)
-  setTimeout(() => {
-    loading.value = false;
-
-    $q.notify({
-      type: "positive",
-      message:
-        "Tu mensaje ha sido enviado con éxito. ¡Gracias por contactarnos!",
-      color: "green-4",
-      textColor: "white",
-      position: "top-right",
-      icon: "check_circle",
-      timeout: 2500,
-    });
-
-    nombre.value = "";
-    correo.value = "";
-    mensaje.value = "";
-  }, 1500);
-}
-
-// Variantes de animación
+// Animaciones
 const titleVariants = useMotionVariants({
   visible: { opacity: 1, y: 0 },
   hidden: { opacity: 0, y: -30 },
 });
 
-const formVariants = useMotionVariants({
-  visible: { opacity: 1, x: 0 },
-  hidden: { opacity: 0, x: -50 },
-});
+function enviarFormulario() {
+  console.log({
+    nombre: nombre.value,
+    correo: correo.value,
+    telefono: telefono.value,
+    empresa: empresa.value,
+    servicio: servicioSeleccionado.value,
+    subcategorias: subcategoriasSeleccionadas.value,
+    mensaje: mensaje.value,
+  });
+  // Esto solo imprime por ahora, en otra etapa conectamos API
+}
 </script>
 
 <style scoped>
-.text-red-10 {
-  color: #e30613 !important;
-}
-
 .contact-page {
   background: linear-gradient(to bottom, #f5f5f5, #eeeeee);
   min-height: 100vh;
@@ -155,7 +184,6 @@ const formVariants = useMotionVariants({
   width: 100%;
   max-width: 960px;
   border-radius: 16px;
-  overflow: hidden;
   background-color: #ffffff;
 }
 
@@ -165,37 +193,15 @@ const formVariants = useMotionVariants({
   background-position: center;
 }
 
-.animated-input:focus-within {
-  transition: 0.3s;
-  border-color: #e30613 !important;
-  box-shadow: 0 0 5px #e30613;
-}
-
 .animated-button {
-  transition: transform 0.2s ease-in-out;
+  transition: 0.3s ease-in-out;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 12px;
+  border-radius: 10px;
 }
 .animated-button:hover {
-  transform: scale(1.05);
-}
-.enhanced-send-button {
-  background: linear-gradient(to right, #e30613, #ff4d4f);
-  color: white;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 10px 20px;
-  box-shadow: 0 4px 10px rgba(227, 6, 19, 0.3);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.enhanced-send-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 14px rgba(227, 6, 19, 0.4);
-}
-
-.enhanced-send-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.3);
+  transform: scale(1.04);
+  background-color: #c20010 !important;
 }
 </style>
