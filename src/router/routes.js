@@ -29,6 +29,13 @@ const routes = [
       },
       //Modulo de Ventas
       {
+        path: "/ver-notificaciones-contacto",
+        component: () =>
+          import(
+            "pages/Dashboard/Ventas/VisualizarNotificacionesDeContacto.vue"
+          ),
+      },
+      {
         path: "/gestionar-clientes",
         component: () => import("pages/Dashboard/Ventas/GestionarClientes.vue"),
       },

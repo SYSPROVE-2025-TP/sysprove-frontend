@@ -20,13 +20,13 @@
                 @submit.prevent="enviarFormulario"
                 class="full-width q-gutter-md"
                 style="max-width: 420px"
+                ref="formRef"
               >
                 <q-input
                   v-model="nombre"
                   label="Nombre Completo"
                   outlined
                   dense
-                  :rules="[(val) => !!val || 'Requerido']"
                 />
                 <q-input
                   v-model="correo"
@@ -34,7 +34,6 @@
                   type="email"
                   outlined
                   dense
-                  :rules="[(val) => /.+@.+\..+/.test(val) || 'Correo inválido']"
                 />
                 <q-input
                   v-model="telefono"
@@ -42,7 +41,6 @@
                   type="tel"
                   outlined
                   dense
-                  :rules="[(val) => !!val || 'Requerido']"
                 />
                 <q-input
                   v-model="empresa"
@@ -111,10 +109,10 @@
     </div>
   </q-page>
 </template>
-
 <script setup>
 import { ref } from "vue";
 import { useMotionVariants } from "@vueuse/motion";
+import { Notify } from "quasar";
 
 // Inputs
 const nombre = ref("");
@@ -125,7 +123,7 @@ const mensaje = ref("");
 const servicioSeleccionado = ref(null);
 const subcategoriasSeleccionadas = ref([]);
 
-// Servicios y subcategorías (puedes extender esto)
+// Servicios y subcategorías
 const serviciosDisponibles = {
   "PRÁCTICAS TECNOLÓGICAS": [
     "CRM",
@@ -160,17 +158,49 @@ const titleVariants = useMotionVariants({
   hidden: { opacity: 0, y: -30 },
 });
 
-function enviarFormulario() {
-  console.log({
-    nombre: nombre.value,
+// Función para enviar el formulario
+async function enviarFormulario() {
+  const payload = {
+    nombres: nombre.value,
     correo: correo.value,
     telefono: telefono.value,
     empresa: empresa.value,
-    servicio: servicioSeleccionado.value,
-    subcategorias: subcategoriasSeleccionadas.value,
+    servicioInteres: servicioSeleccionado.value,
+    subcategoria: subcategoriasSeleccionadas.value.join(", "),
     mensaje: mensaje.value,
-  });
-  // Esto solo imprime por ahora, en otra etapa conectamos API
+  };
+
+  try {
+    const response = await fetch("http://localhost:4000/api/contacto", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) throw new Error("Error al enviar mensaje");
+
+    Notify.create({
+      type: "positive",
+      message: "Mensaje enviado correctamente",
+    });
+
+    // Limpiar campos
+    nombre.value = "";
+    correo.value = "";
+    telefono.value = "";
+    empresa.value = "";
+    mensaje.value = "";
+    servicioSeleccionado.value = null;
+    subcategoriasSeleccionadas.value = [];
+  } catch (error) {
+    Notify.create({
+      type: "negative",
+      message: "No se pudo enviar el mensaje. Intenta nuevamente.",
+    });
+    console.error("Error al enviar:", error);
+  }
 }
 </script>
 

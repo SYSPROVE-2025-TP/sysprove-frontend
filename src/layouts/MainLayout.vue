@@ -52,25 +52,31 @@
           />
 
           <!-- Avatar y menú -->
-          <q-btn round flat class="header-btn">
+          <q-btn round flat>
             <q-avatar size="30px">
               <img v-if="imagenUsuario" :src="imagenUsuario" />
               <img v-else src="/public/profile.svg" />
               <q-menu>
                 <div class="row no-wrap q-pa-md">
+                  <div class="column">
+                    <div class="text-h6 q-mb-md">
+                      {{ authStore.usuario.nombres }}
+                      {{ authStore.usuario.apellidos }}
+                    </div>
+                    <div>{{ authStore.usuario.correo }}</div>
+
+                    <div>{{ authStore.usuario.rol.nombre }}</div>
+                    <div>{{ authStore.usuario.rol.area.nombre }}</div>
+                  </div>
+
                   <q-separator vertical inset class="q-mx-lg" />
+
                   <div class="column items-center">
                     <q-avatar size="72px" class="q-mb-sm">
                       <img v-if="imagenUsuario" :src="imagenUsuario" />
                       <img v-else src="/public/profile.svg" />
                     </q-avatar>
-                    <div
-                      v-if="authStore.usuario"
-                      class="text-subtitle1 q-mt-md q-mb-xs"
-                    >
-                      {{ authStore.usuario.nombres }}
-                      {{ authStore.usuario.apellidos }}
-                    </div>
+
                     <q-btn
                       round
                       flat
@@ -107,7 +113,7 @@
               <q-item-section avatar>
                 <q-icon name="dashboard" />
               </q-item-section>
-              <q-item-section> Dashboard </q-item-section>
+              <q-item-section> Dashboard Desarrollo </q-item-section>
             </q-item>
 
             <q-item
@@ -120,29 +126,37 @@
               <q-item-section avatar>
                 <q-icon name="dashboard" />
               </q-item-section>
-              <q-item-section> Dashboard </q-item-section>
+              <q-item-section> Dashboard Ventas</q-item-section>
+            </q-item>
+            <q-item
+              v-if="authStore.isAdmin || authStore.isVentas"
+              clickable
+              v-ripple
+              to="ver-notificaciones-contacto"
+              class="drawer-item"
+            >
+              <q-item-section avatar>
+                <q-icon name="mail" />
+              </q-item-section>
+              <q-item-section> Ver Notificaciones de Cliente </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple to="/perfil" class="drawer-item">
+            <!-- <q-item clickable v-ripple to="/perfil" class="drawer-item">
               <q-item-section avatar>
                 <q-icon name="people" />
               </q-item-section>
               <q-item-section> Perfil </q-item-section>
-            </q-item>
+            </q-item> -->
 
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isVentas"
               label="Soporte de Flujo de Trabajo"
               icon="work"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
-                <q-item
-                  clickable
-                  v-ripple
-                  to="/gestionar-clientes"
-                  class="drawer-item"
-                >
+                <q-item clickable v-ripple to="/gestionar-clientes">
                   <q-item-section avatar>
                     <q-icon name="people" />
                   </q-item-section>
@@ -163,7 +177,7 @@
               label="Area Comercial"
               icon="business_center"
               expand-separator
-              class="drawer-item"
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item
@@ -314,7 +328,7 @@
               label="Area de Preventa"
               icon="handshake"
               expand-separator
-              class="drawer-item"
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/asignar-oportunidades">
@@ -328,6 +342,7 @@
                   label="Propuestas tecnicas"
                   icon="integration_instructions"
                   expand-separator
+                  class="drawer-item-desplegable"
                 >
                   <q-item clickable v-ripple to="/gestionar-propuestas">
                     <q-item-section avatar>
@@ -363,6 +378,7 @@
                   label="Repositorio de Ventas"
                   icon="monetization_on"
                   expand-separator
+                  class="drawer-item-desplegable"
                 >
                   <q-item
                     clickable
@@ -417,6 +433,7 @@
               label="Administración"
               icon="admin_panel_settings"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/gestionar-usuarios">
@@ -447,6 +464,7 @@
               label="Fabrica de Software"
               icon="factory"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/proyectos-desarrollo">
@@ -478,11 +496,13 @@
                 </q-item>
               </q-list>
             </q-expansion-item>
+
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isDesarrollo"
               label="Aseguramiento de Calidad (QA)"
               icon="shield"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/gestionar-defectos">
@@ -575,6 +595,7 @@ const notificaciones = ref([
 ]);
 
 const authStore = useAuthStore();
+
 const router = useRouter();
 const leftDrawerOpen = ref(false);
 const mobileData = ref(true); // Estos parecen ser de ejemplo, puedes mantenerlos o quitarlos
@@ -680,11 +701,24 @@ onMounted(async () => {
   background-color: white;
   border-radius: 10px;
   margin-bottom: 8px;
-  padding: 8px;
+  transition: background-color 0.3s ease;
+}
+.drawer-item-desplegable {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  /* La propiedad 'color' se ha eliminado de aquí */
   transition: background-color 0.3s ease;
 }
 .drawer-item:hover {
   background-color: #ffe5e5; /* rojo claro suave */
+}
+.drawer-item-deplegable:hover {
+  background-color: #a06161; /* rojo claro suave */
+}
+.drawer-item-desplegable .q-list {
+  padding-left: 20px; /* Ajusta este valor según lo necesites */
+  background-color: #ffffff;
 }
 .q-drawer {
   background: linear-gradient(to bottom, #fce4ec, #ffffff); /* fondo suave */

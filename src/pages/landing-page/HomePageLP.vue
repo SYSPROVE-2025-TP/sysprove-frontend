@@ -93,6 +93,7 @@
         text-color="red-10"
         class="q-mt-lg"
         unelevated
+        to="/landing-page/contacto"
       />
     </div>
   </q-page>
