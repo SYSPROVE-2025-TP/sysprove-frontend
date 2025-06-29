@@ -150,6 +150,7 @@ const iniciarSesion = async () => {
     });
 
     authStore.setUsuario(usuarioResponse.data);
+    console.log(usuarioResponse);
     router.push("/index");
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
