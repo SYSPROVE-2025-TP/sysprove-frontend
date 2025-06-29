@@ -182,6 +182,20 @@
             >
               <q-list>
                 <q-item
+                  v-if="authStore.isAdmin || authStore.isVentas"
+                  clickable
+                  v-ripple
+                  to="ver-notificaciones-contacto"
+                  class="drawer-item"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="send" />
+                  </q-item-section>
+                  <q-item-section>
+                    Ver Notificaciones de Cliente
+                  </q-item-section>
+                </q-item>
+                <q-item
                   clickable
                   v-ripple
                   to="/gestionar-clientes"
@@ -490,11 +504,13 @@
                     Feedback de Proyectos de Desarrollo
                   </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/desarrollo/tareas">
+                <q-item clickable v-ripple to="/generar-reporte-desarrollo">
                   <q-item-section avatar>
                     <q-icon name="task" />
                   </q-item-section>
-                  <q-item-section> Tareas </q-item-section>
+                  <q-item-section>
+                    Generar Reportes de desarrollo
+                  </q-item-section>
                 </q-item>
                 <q-item clickable v-ripple to="/feedback-desarrollo">
                   <q-item-section avatar>
@@ -505,11 +521,11 @@
                   </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple to="/desarrollo/equipos">
+                <q-item clickable v-ripple to="/gestionar-tareas-desarrollo">
                   <q-item-section avatar>
                     <q-icon name="group" />
                   </q-item-section>
-                  <q-item-section> Equipos </q-item-section>
+                  <q-item-section> Gestionar Estado de Tarea </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>

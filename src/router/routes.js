@@ -135,6 +135,13 @@ const routes = [
           import("src/pages/Dashboard/Desarrollo/EnviarFeedbackaVentas.vue"),
       },
       {
+        path: "/generar-reporte-desarrollo",
+        component: () =>
+          import(
+            "src/pages/Dashboard/Desarrollo/GenerarReportesDesarrollo.vue"
+          ),
+      },
+      {
         path: "/gestionar-proyectos",
         component: () =>
           import("pages/Dashboard/Desarrollo/GestionarProyectos.vue"),
@@ -143,6 +150,11 @@ const routes = [
         path: "/proyectos-desarrollo",
         component: () =>
           import("pages/Dashboard/Desarrollo/ProyectosDesarrolloPage.vue"),
+      },
+      {
+        path: "/gestionar-tareas-desarrollo",
+        component: () =>
+          import("pages/Dashboard/Desarrollo/GestionarEstadoDeTareas.vue"),
       },
       {
         path: "/consultar-proyecto-desarrollo",
