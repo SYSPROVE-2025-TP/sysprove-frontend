@@ -163,6 +163,17 @@ const routes = [
         component: () =>
           import("src/pages/Dashboard/Desarrollo/GestionarDefectos.vue"),
       },
+      //Modulo de soporte
+      {
+        path: "/gestionar-incidencias",
+        component: () =>
+          import("src/pages/Dashboard/Administrador/GestionarIncidencias.vue"),
+      },
+      {
+        path: "/escalar-incidencia",
+        component: () =>
+          import("src/pages/Dashboard/Administrador/EscalarIncidencia.vue"),
+      },
     ],
   },
   {

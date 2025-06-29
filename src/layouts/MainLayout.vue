@@ -526,6 +526,30 @@
                 </q-item>
               </q-list>
             </q-expansion-item>
+            <q-expansion-item
+              v-if="authStore.isAdmin || authStore.isDesarrollo"
+              label="Soporte TI"
+              icon="support"
+              expand-separator
+              class="drawer-item-desplegable"
+            >
+              <q-list>
+                <q-item clickable v-ripple to="/gestionar-incidencias">
+                  <q-item-section avatar>
+                    <q-icon name="bug_report" />
+                  </q-item-section>
+                  <q-item-section> Reporte de Incidencias </q-item-section>
+                </q-item>
+              </q-list>
+              <q-list>
+                <q-item clickable v-ripple to="/escalar-incidencia">
+                  <q-item-section avatar>
+                    <q-icon name="bug_report" />
+                  </q-item-section>
+                  <q-item-section> Escalar Incidencia </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
           </q-list>
         </q-scroll-area>
 
