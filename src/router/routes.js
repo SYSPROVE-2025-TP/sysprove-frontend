@@ -29,6 +29,13 @@ const routes = [
       },
       //Modulo de Ventas
       {
+        path: "/ver-notificaciones-contacto",
+        component: () =>
+          import(
+            "pages/Dashboard/Ventas/VisualizarNotificacionesDeContacto.vue"
+          ),
+      },
+      {
         path: "/gestionar-clientes",
         component: () => import("pages/Dashboard/Ventas/GestionarClientes.vue"),
       },
@@ -112,7 +119,28 @@ const routes = [
         component: () =>
           import("src/pages/Dashboard/Ventas/GestionarOportunidades.vue"),
       },
+      {
+        path: "/feedback-ventas",
+        component: () =>
+          import("src/pages/Dashboard/Ventas/GestionarFeedbackDesarrollo.vue"),
+      },
       //Modulo de Desarrollo
+      {
+        path: "/dashboard-desarrollo",
+        component: () => import("pages/Dashboard/Desarrollo/DashboardDev.vue"),
+      },
+      {
+        path: "/feedback-desarrollo",
+        component: () =>
+          import("src/pages/Dashboard/Desarrollo/EnviarFeedbackaVentas.vue"),
+      },
+      {
+        path: "/generar-reporte-desarrollo",
+        component: () =>
+          import(
+            "src/pages/Dashboard/Desarrollo/GenerarReportesDesarrollo.vue"
+          ),
+      },
       {
         path: "/gestionar-proyectos",
         component: () =>
@@ -124,6 +152,21 @@ const routes = [
           import("pages/Dashboard/Desarrollo/ProyectosDesarrolloPage.vue"),
       },
       {
+        path: "/gestionar-tareas-desarrollo",
+        component: () =>
+          import("pages/Dashboard/Desarrollo/GestionarEstadoDeTareas.vue"),
+      },
+      {
+        path: "/consultar-proyecto-desarrollo",
+        component: () =>
+          import("pages/Dashboard/Desarrollo/VerProgresoProyecto.vue"),
+      },
+      {
+        path: "/feedback-proyecto-desarrollo",
+        component: () =>
+          import("pages/Dashboard/Desarrollo/FeedbackRecibido.vue"),
+      },
+      {
         path: "/aprobar-propuesta",
         component: () =>
           import("pages/Dashboard/Ventas/AprobacionPropuestas.vue"),
@@ -131,6 +174,32 @@ const routes = [
       {
         path: "/vizualizar-pipeline-ventas",
         component: () => import("src/pages/Dashboard/PipeVentasPage.vue"),
+      },
+      {
+        path: "/gestionar-casos-prueba",
+        component: () =>
+          import("src/pages/Dashboard/Desarrollo/CasosPrueba.vue"),
+      },
+      {
+        path: "/gestionar-defectos",
+        component: () =>
+          import("src/pages/Dashboard/Desarrollo/GestionarDefectos.vue"),
+      },
+      //Modulo de soporte
+      {
+        path: "/dashboard-soporte",
+        component: () =>
+          import("src/pages/Dashboard/Administrador/DashboardSoporte.vue"),
+      },
+      {
+        path: "/gestionar-incidencias",
+        component: () =>
+          import("src/pages/Dashboard/Administrador/GestionarIncidencias.vue"),
+      },
+      {
+        path: "/escalar-incidencia",
+        component: () =>
+          import("src/pages/Dashboard/Administrador/EscalarIncidencia.vue"),
       },
     ],
   },
@@ -141,6 +210,28 @@ const routes = [
   {
     path: "/restablecer-contraseña",
     component: () => import("pages/RestablecerContraseña.vue"),
+  },
+  {
+    path: "/landing-page",
+    component: () => import("layouts/LandingLayout.vue"),
+    children: [
+      {
+        path: "",
+        redirect: "/landing-page/home",
+      },
+      {
+        path: "/landing-page/home",
+        component: () => import("pages/landing-page/HomePageLP.vue"),
+      },
+      {
+        path: "/landing-page/servicios",
+        component: () => import("pages/landing-page/ServiciosPage.vue"),
+      },
+      {
+        path: "/landing-page/contacto",
+        component: () => import("pages/landing-page/ContactoPage.vue"),
+      },
+    ],
   },
   // Always leave this as last one,
   // but you can also remove it

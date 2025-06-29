@@ -1,8 +1,12 @@
 <template>
   <q-layout view="lHh LpR lFf">
     <div>
-      <q-header class="bg-white text-primary shadow-2">
+      <q-header
+        style="background: linear-gradient(135deg, #b71c1c, #e53935)"
+        class="text-white shadow-2"
+      >
         <q-toolbar>
+          <!-- Botón del menú -->
           <q-btn
             flat
             dense
@@ -10,11 +14,25 @@
             icon="menu"
             aria-label="Menu"
             @click="toggleLeftDrawer"
-            class="q-mr-sm"
+            class="header-btn q-mr-sm"
           />
-          <q-toolbar-title class="text-h6">SYSFUN SYSTEM</q-toolbar-title>
 
-          <q-btn flat round dense to="/notificaciones-oportunidades">
+          <!-- Título -->
+          <q-toolbar-title
+            class="text-h6"
+            style="font-weight: bold; font-size: 18px"
+          >
+            SYSPROVE SYSTEM
+          </q-toolbar-title>
+
+          <!-- Notificaciones -->
+          <q-btn
+            flat
+            round
+            dense
+            to="/notificaciones-oportunidades"
+            class="header-btn"
+          >
             <q-badge
               color="red"
               floating
@@ -23,13 +41,17 @@
             />
             <q-icon name="notifications" />
           </q-btn>
+
+          <!-- Configuración -->
           <q-btn
             round
             flat
             icon="settings"
             aria-label="Settings"
-            class="q-mr-sm"
+            class="header-btn q-mr-sm"
           />
+
+          <!-- Avatar y menú -->
           <q-btn round flat>
             <q-avatar size="30px">
               <img v-if="imagenUsuario" :src="imagenUsuario" />
@@ -37,9 +59,14 @@
               <q-menu>
                 <div class="row no-wrap q-pa-md">
                   <div class="column">
-                    <div class="text-h6 q-mb-md">Settings</div>
-                    <q-toggle v-model="mobileData" label="Use Mobile Data" />
-                    <q-toggle v-model="bluetooth" label="Bluetooth" />
+                    <div class="text-h6 q-mb-md">
+                      {{ authStore.usuario.nombres }}
+                      {{ authStore.usuario.apellidos }}
+                    </div>
+                    <div>{{ authStore.usuario.correo }}</div>
+
+                    <div>{{ authStore.usuario.rol.nombre }}</div>
+                    <div>{{ authStore.usuario.rol.area.nombre }}</div>
                   </div>
 
                   <q-separator vertical inset class="q-mx-lg" />
@@ -50,13 +77,6 @@
                       <img v-else src="/public/profile.svg" />
                     </q-avatar>
 
-                    <div
-                      v-if="authStore.usuario"
-                      class="text-subtitle1 q-mt-md q-mb-xs"
-                    >
-                      {{ authStore.usuario.nombres }}
-                      {{ authStore.usuario.apellidos }}
-                    </div>
                     <q-btn
                       round
                       flat
@@ -82,24 +102,59 @@
           "
         >
           <q-list padding>
-            <q-item clickable v-ripple to="/index">
+            <q-item
+              v-if="authStore.isAdmin || authStore.isDesarrollo"
+              clickable
+              v-ripple
+              to="/dashboard-desarrollo"
+              class="drawer-item"
+            >
+              <!--Dashboard Desarrollo -->
               <q-item-section avatar>
                 <q-icon name="dashboard" />
               </q-item-section>
-              <q-item-section> Dashboard </q-item-section>
+              <q-item-section> Dashboard Desarrollo </q-item-section>
             </q-item>
-            <q-item clickable v-ripple to="/perfil">
+
+            <q-item
+              v-if="authStore.isAdmin || authStore.isVentas"
+              clickable
+              v-ripple
+              to="/index"
+              class="drawer-item"
+            >
+              <q-item-section avatar>
+                <q-icon name="dashboard" />
+              </q-item-section>
+              <q-item-section> Dashboard Ventas</q-item-section>
+            </q-item>
+
+            <q-item
+              v-if="authStore.isAdmin"
+              clickable
+              v-ripple
+              to="/dashboard-soporte"
+              class="drawer-item"
+            >
+              <q-item-section avatar>
+                <q-icon name="dashboard" />
+              </q-item-section>
+              <q-item-section> Dashboard Soporte </q-item-section>
+            </q-item>
+
+            <!-- <q-item clickable v-ripple to="/perfil" class="drawer-item">
               <q-item-section avatar>
                 <q-icon name="people" />
               </q-item-section>
               <q-item-section> Perfil </q-item-section>
-            </q-item>
+            </q-item> -->
 
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isVentas"
               label="Soporte de Flujo de Trabajo"
               icon="work"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/gestionar-clientes">
@@ -123,22 +178,52 @@
               label="Area Comercial"
               icon="business_center"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
-                <q-item clickable v-ripple to="/gestionar-clientes">
+                <q-item
+                  v-if="authStore.isAdmin || authStore.isVentas"
+                  clickable
+                  v-ripple
+                  to="ver-notificaciones-contacto"
+                  class="drawer-item"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="send" />
+                  </q-item-section>
+                  <q-item-section>
+                    Ver Notificaciones de Cliente
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-clientes"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="wallet" />
                   </q-item-section>
                   <q-item-section> Cartera de Clientes </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/gestionar-prospectos">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-prospectos"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="person_search" />
                   </q-item-section>
                   <q-item-section> Registrar Prospecto / Lead </q-item-section>
                 </q-item>
 
-                <q-item clickable v-ripple to="/interacciones-clientes">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/interacciones-clientes"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="phone" />
                   </q-item-section>
@@ -151,7 +236,12 @@
                   </q-item-section>
                   <q-item-section> Gestionar Reuniones </q-item-section>
                 </q-item> -->
-                <q-item clickable v-ripple to="/gestionar-oportunidades">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-oportunidades"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="insights" />
                   </q-item-section>
@@ -164,13 +254,18 @@
                   </q-item-section>
                   <q-item-section> Propuestas Tecnicas </q-item-section>
                 </q-item> -->
-                <q-item clickable v-ripple to="/gestionar-estimaciones">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/gestionar-estimaciones"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="assignment_ind" />
                   </q-item-section>
                   <q-item-section> Gestionar Estimaciones </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple>
+                <q-item clickable v-ripple class="drawer-item">
                   <q-item-section avatar>
                     <q-icon name="manage_search" />
                   </q-item-section>
@@ -184,19 +279,34 @@
                     Aprobar Descuentos especiales
                   </q-item-section>
                 </q-item> -->
-                <q-item clickable v-ripple to="/reporte-ventas">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/reporte-ventas"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="sell" />
                   </q-item-section>
                   <q-item-section> Reporte de ventas </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/pipeline-ventas">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/pipeline-ventas"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="sell" />
                   </q-item-section>
                   <q-item-section> Pipeline de ventas </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/vizualizar-pipeline-ventas">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/vizualizar-pipeline-ventas"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="filter_list" />
                   </q-item-section>
@@ -204,7 +314,12 @@
                     Visualizar Pipeline de Ventas
                   </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/enviar-cotizacion">
+                <q-item
+                  clickable
+                  v-ripple
+                  to="/enviar-cotizacion"
+                  class="drawer-item"
+                >
                   <q-item-section avatar>
                     <q-icon name="send" />
                   </q-item-section>
@@ -212,11 +327,23 @@
                 </q-item>
               </q-list>
             </q-expansion-item>
+            <q-item
+              v-if="authStore.isAdmin || authStore.isVentas"
+              clickable
+              v-ripple
+              to="/feedback-ventas"
+            >
+              <q-item-section avatar>
+                <q-icon name="task" />
+              </q-item-section>
+              <q-item-section> Feedback de Desarrollo </q-item-section>
+            </q-item>
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isVentas"
               label="Area de Preventa"
               icon="handshake"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/asignar-oportunidades">
@@ -230,6 +357,7 @@
                   label="Propuestas tecnicas"
                   icon="integration_instructions"
                   expand-separator
+                  class="drawer-item-desplegable"
                 >
                   <q-item clickable v-ripple to="/gestionar-propuestas">
                     <q-item-section avatar>
@@ -265,6 +393,7 @@
                   label="Repositorio de Ventas"
                   icon="monetization_on"
                   expand-separator
+                  class="drawer-item-desplegable"
                 >
                   <q-item
                     clickable
@@ -319,6 +448,7 @@
               label="Administración"
               icon="admin_panel_settings"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/gestionar-usuarios">
@@ -346,9 +476,10 @@
 
             <q-expansion-item
               v-if="authStore.isAdmin || authStore.isDesarrollo"
-              label="Módulo de Desarrollo"
-              icon="code"
+              label="Fabrica de Software"
+              icon="factory"
               expand-separator
+              class="drawer-item-desplegable"
             >
               <q-list>
                 <q-item clickable v-ripple to="/proyectos-desarrollo">
@@ -357,43 +488,134 @@
                   </q-item-section>
                   <q-item-section> Proyectos de Desarrollo </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple to="/desarrollo/tareas">
+                <q-item clickable v-ripple to="/consultar-proyecto-desarrollo">
+                  <q-item-section avatar>
+                    <q-icon name="timeline" />
+                  </q-item-section>
+                  <q-item-section>
+                    Consultar Proceso De Proyecto
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/feedback-proyecto-desarrollo">
+                  <q-item-section avatar>
+                    <q-icon name="feedback" />
+                  </q-item-section>
+                  <q-item-section>
+                    Feedback de Proyectos de Desarrollo
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/generar-reporte-desarrollo">
                   <q-item-section avatar>
                     <q-icon name="task" />
                   </q-item-section>
-                  <q-item-section> Tareas </q-item-section>
+                  <q-item-section>
+                    Generar Reportes de desarrollo
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/feedback-desarrollo">
+                  <q-item-section avatar>
+                    <q-icon name="task" />
+                  </q-item-section>
+                  <q-item-section>
+                    Feedback de proyectos de desarrollo
+                  </q-item-section>
+                </q-item>
+
+                <q-item clickable v-ripple to="/gestionar-tareas-desarrollo">
+                  <q-item-section avatar>
+                    <q-icon name="group" />
+                  </q-item-section>
+                  <q-item-section> Gestionar Estado de Tarea </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+
+            <q-expansion-item
+              v-if="authStore.isAdmin || authStore.isDesarrollo"
+              label="Aseguramiento de Calidad (QA)"
+              icon="shield"
+              expand-separator
+              class="drawer-item-desplegable"
+            >
+              <q-list>
+                <q-item clickable v-ripple to="/gestionar-defectos">
+                  <q-item-section avatar>
+                    <q-icon name="bug_report" />
+                  </q-item-section>
+                  <q-item-section> Reporte de Errores </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/gestionar-casos-prueba">
+                  <q-item-section avatar>
+                    <q-icon name="search" />
+                  </q-item-section>
+                  <q-item-section> Casos de Prueba </q-item-section>
                 </q-item>
 
                 <q-item clickable v-ripple to="/desarrollo/equipos">
                   <q-item-section avatar>
-                    <q-icon name="group" />
+                    <q-icon name="analytics" />
                   </q-item-section>
-                  <q-item-section> Equipos </q-item-section>
+                  <q-item-section> Aseguramiento de Calidad </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+            <q-expansion-item
+              v-if="authStore.isAdmin"
+              label="Soporte TI"
+              icon="support"
+              expand-separator
+              class="drawer-item-desplegable"
+            >
+              <q-list>
+                <q-item clickable v-ripple to="/gestionar-incidencias">
+                  <q-item-section avatar>
+                    <q-icon name="bug_report" />
+                  </q-item-section>
+                  <q-item-section> Reporte de Incidencias </q-item-section>
+                </q-item>
+              </q-list>
+              <q-list>
+                <q-item clickable v-ripple to="/escalar-incidencia">
+                  <q-item-section avatar>
+                    <q-icon name="bug_report" />
+                  </q-item-section>
+                  <q-item-section> Escalar Incidencia </q-item-section>
                 </q-item>
               </q-list>
             </q-expansion-item>
           </q-list>
         </q-scroll-area>
 
-        <q-img
+        <div
           class="absolute-top"
-          src="https://img.freepik.com/fotos-premium/imagen-fondo-empresarial-cuadros-graficos-financieros_1021632-971.jpg?w=1380"
-          style="height: 150px"
+          style="
+            height: 150px;
+            background: linear-gradient(135deg, #b71c1c, #e53935);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+          "
         >
-          <div
-            class="absolute-bottom bg-transparent"
-            style="color: darkblue; font-size: medium"
-          >
-            <q-avatar size="56px" class="q-mb-sm">
-              <img v-if="imagenUsuario" :src="imagenUsuario" />
-              <img v-else src="/public/profile.svg" />
-            </q-avatar>
-            <div v-if="authStore.usuario" class="text-weight-bold">
-              {{ authStore.usuario.nombres }} {{ authStore.usuario.apellidos }}
+          <div class="row items-center justify-center">
+            <q-img
+              src="https://media.licdn.com/dms/image/v2/D4E0BAQGri8qVkgCxqQ/company-logo_200_200/company-logo_200_200/0/1736349171028/hitss_peru_logo?e=2147483647&v=beta&t=G4_kF9RlqnC9Sn3RY8JkwX-BHA6p9uJBRUqYivTpKic"
+              style="width: 50px; height: 50px; border-radius: 8px"
+            />
+            <div
+              class="sysprove-title q-ml-sm"
+              style="
+                color: white;
+                font-weight: bold;
+                font-size: 18px;
+                transition: color 0.3s ease;
+                cursor: pointer;
+              "
+            >
+              SYSPROVE SYSTEM
             </div>
-            <div v-if="authStore.usuario">{{ authStore.usuario.correo }}</div>
           </div>
-        </q-img>
+        </div>
 
         <!-- <div class="q-pa-md absolute-bottom-center" style="margin: auto">
           <q-btn
@@ -408,7 +630,9 @@
     </div>
 
     <q-page-container>
-      <router-view />
+      <q-page class="q-pa-md full-height">
+        <router-view />
+      </q-page>
     </q-page-container>
   </q-layout>
 </template>
@@ -430,6 +654,7 @@ const notificaciones = ref([
 ]);
 
 const authStore = useAuthStore();
+
 const router = useRouter();
 const leftDrawerOpen = ref(false);
 const mobileData = ref(true); // Estos parecen ser de ejemplo, puedes mantenerlos o quitarlos
@@ -515,5 +740,47 @@ onMounted(async () => {
 /* Espaciado en el toolbar */
 .q-toolbar {
   justify-content: space-between; /* Distribuye el contenido en la barra de herramientas */
+}
+
+.sysprove-title:hover {
+  color: #ffcdd2 !important; /* Rojo claro al pasar el mouse */
+}
+
+.header-btn {
+  color: white;
+  transition:
+    transform 0.2s ease,
+    background-color 0.3s ease;
+}
+.header-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.08);
+}
+.drawer-item {
+  background-color: white;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: background-color 0.3s ease;
+}
+.drawer-item-desplegable {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  /* La propiedad 'color' se ha eliminado de aquí */
+  transition: background-color 0.3s ease;
+}
+.drawer-item:hover {
+  background-color: #ffe5e5; /* rojo claro suave */
+}
+.drawer-item-deplegable:hover {
+  background-color: #a06161; /* rojo claro suave */
+}
+.drawer-item-desplegable .q-list {
+  padding-left: 20px; /* Ajusta este valor según lo necesites */
+  background-color: #ffffff;
+}
+.q-drawer {
+  background: linear-gradient(to bottom, #fce4ec, #ffffff); /* fondo suave */
+  padding: 12px;
 }
 </style>
