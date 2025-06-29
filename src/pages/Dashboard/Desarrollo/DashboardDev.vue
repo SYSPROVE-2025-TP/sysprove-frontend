@@ -121,7 +121,6 @@ onMounted(async () => {
     backlogsPendientes.value = resBacklogs.data.filter(
       (item) => item.estadoGeneral !== "Completado",
     );
-
     avanceProyectos.value = resProyectos.data.map((proyecto) => {
       const backlogs = resBacklogs.data.filter(
         (b) => b.proyectoDesarrollo === proyecto._id,
@@ -130,9 +129,11 @@ onMounted(async () => {
       const completados = backlogs.filter(
         (b) => b.estadoGeneral === "Completado",
       ).length;
+
       return {
         nombre: proyecto.nombre,
         porcentaje: total ? completados / total : 0,
+        estado: proyecto.estadoDesarrollo || "Sin Estado", // Asegúrate de tener este campo en tu modelo de proyecto
       };
     });
 
@@ -141,21 +142,51 @@ onMounted(async () => {
     console.error("Error cargando dashboard de desarrollo:", error);
   }
 });
-
 const graficarDistribucion = () => {
-  const completados = totalBacklogsCompletados.value;
-  const pendientes = totalBacklogs.value - completados;
+  const estados = {};
+
+  // Contar cuántos proyectos hay por estado
+  avanceProyectos.value.forEach((proyecto) => {
+    const estado = proyecto.estado || "Sin Estado";
+    estados[estado] = (estados[estado] || 0) + 1;
+  });
+
+  const labels = Object.keys(estados);
+  const data = Object.values(estados);
+  const colores = labels.map((estado) => {
+    switch (estado) {
+      case "Iniciado":
+        return "#4caf50"; // verde
+      case "Análisis":
+        return "#ff9800"; // naranja
+      case "Diseño":
+        return "#2196f3"; // azul
+      case "Desarrollo":
+        return "#3f51b5"; // azul oscuro
+      case "QA":
+        return "#9c27b0"; // morado
+      case "Implementación":
+        return "#00bcd4"; // celeste
+      case "Completado":
+        return "#8bc34a"; // verde claro
+      case "Cancelado":
+        return "#f44336"; // rojo
+      default:
+        return "#9e9e9e"; // gris
+    }
+  });
+
   const ctx = chartCanvas.value?.getContext("2d");
   if (!ctx) return;
 
   new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: ["Completados", "Pendientes"],
+      labels,
       datasets: [
         {
-          data: [completados, pendientes],
-          backgroundColor: ["#4caf50", "#ff9800"],
+          data,
+          backgroundColor: colores,
         },
       ],
     },
@@ -163,6 +194,12 @@ const graficarDistribucion = () => {
       responsive: true,
       plugins: {
         legend: { position: "bottom" },
+        tooltip: {
+          callbacks: {
+            label: (context) =>
+              `${context.label}: ${context.parsed} proyecto(s)`,
+          },
+        },
       },
     },
   });
