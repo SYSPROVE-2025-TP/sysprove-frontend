@@ -292,33 +292,423 @@
                 ></q-item>
               </q-list>
             </q-tab-panel>
-            <q-tab-panel name="backlog"
-              ><div class="text-h6">Product Backlog</div>
-              <p>Aquí se gestionarán los Backlog Items.</p></q-tab-panel
-            >
-            <q-tab-panel name="sprints"
-              ><div class="text-h6">Sprints</div>
-              <p>Aquí se gestionarán los Sprints.</p></q-tab-panel
-            >
+            <q-tab-panel name="backlog">
+              <div class="row items-center justify-between q-mb-md">
+                <div class="text-h6">Product Backlog</div>
+                <q-btn
+                  color="primary"
+                  icon="add"
+                  label="Agregar Ítem"
+                  @click="abrirModalBacklog"
+                />
+              </div>
+
+              <div v-if="isLoadingBacklog" class="text-grey text-center">
+                <q-spinner color="primary" />
+                <div>Cargando ítems del backlog...</div>
+              </div>
+
+              <div
+                v-else-if="backlogItems.length === 0"
+                class="text-grey text-center"
+              >
+                No hay ítems del backlog aún.
+              </div>
+
+              <q-list v-else bordered separator>
+                <q-item v-for="item in backlogItems" :key="item._id">
+                  <q-item-section>
+                    <q-item-label>{{ item.nombre }}</q-item-label>
+                    <q-item-label caption>{{ item.descripcion }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-chip size="sm" color="primary" text-color="white">
+                      {{ item.tipo }}
+                    </q-chip>
+                    <q-btn
+                      dense
+                      flat
+                      icon="edit"
+                      @click.stop="abrirModalEditarBacklog(item)"
+                    />
+                    <q-btn
+                      dense
+                      flat
+                      icon="delete"
+                      color="negative"
+                      @click.stop="eliminarBacklogItem(item)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-tab-panel>
+            <q-tab-panel name="sprints">
+              <div class="row items-center justify-between q-mb-md">
+                <div class="text-h6">Sprints</div>
+                <q-btn
+                  color="secondary"
+                  icon="event"
+                  label="Crear Sprint"
+                  @click="abrirModalSprint"
+                />
+              </div>
+
+              <div v-if="isLoadingSprints" class="text-grey text-center">
+                <q-spinner color="primary" />
+                <div>Cargando sprints...</div>
+              </div>
+
+              <div
+                v-else-if="sprints.length === 0"
+                class="text-grey text-center"
+              >
+                No hay sprints registrados aún.
+              </div>
+
+              <q-timeline v-else color="secondary" layout="comfortable">
+                <q-timeline-entry v-for="sprint in sprints" :key="sprint._id">
+                  <template #title>
+                    <div class="row items-center justify-between">
+                      <div class="text-subtitle1">{{ sprint.nombre }}</div>
+                      <div>
+                        <q-btn
+                          flat
+                          dense
+                          icon="edit"
+                          @click.stop="abrirModalEditarSprint(sprint)"
+                        />
+                        <q-btn
+                          flat
+                          dense
+                          icon="delete"
+                          color="negative"
+                          @click.stop="eliminarSprint(sprint)"
+                        />
+                      </div>
+                    </div>
+                  </template>
+
+                  <template #subtitle>
+                    {{ formatDate(sprint.fechaInicio) }} -
+                    {{ formatDate(sprint.fechaFin) }}
+                  </template>
+
+                  <div>
+                    <strong>Objetivo:</strong>
+                    {{ sprint.objetivo || "Sin definir" }}
+                  </div>
+                  <div><strong>Estado:</strong> {{ sprint.estado }}</div>
+                </q-timeline-entry>
+              </q-timeline>
+            </q-tab-panel>
           </q-tab-panels>
         </div>
+      </q-card>
+    </q-dialog>
+
+    <!--Dialogo de crear item del backlog-->
+    <q-dialog v-model="mostrarModalBacklog">
+      <q-card style="width: 600px; max-width: 90vw">
+        <q-form @submit.prevent="crearBacklogItem">
+          <q-card-section>
+            <div class="text-h6">Nuevo Ítem del Backlog</div>
+          </q-card-section>
+
+          <q-card-section class="q-gutter-md">
+            <q-input
+              v-model="nuevoBacklogItem.nombre"
+              label="Título *"
+              filled
+              lazy-rules
+              :rules="[(val) => !!val || 'El nombre es obligatorio']"
+            />
+            <q-input
+              v-model="nuevoBacklogItem.descripcion"
+              label="Descripción"
+              type="textarea"
+              autogrow
+              filled
+            />
+            <q-select
+              v-model="nuevoBacklogItem.tipo"
+              label="Tipo *"
+              filled
+              :options="[
+                'Historia de Usuario',
+                'Tarea Técnica',
+                'Bug',
+                'Mejora',
+                'Investigación',
+              ]"
+              emit-value
+              map-options
+              lazy-rules
+              :rules="[(val) => !!val || 'Selecciona un tipo']"
+            />
+            <q-select
+              v-model="nuevoBacklogItem.prioridad"
+              label="Prioridad"
+              filled
+              :options="['Muy Alta', 'Alta', 'Media', 'Baja', 'Muy Baja']"
+              emit-value
+              map-options
+            />
+            <q-input
+              v-model.number="nuevoBacklogItem.estimacionPuntos"
+              label="Estimación (Story Points)"
+              type="number"
+              filled
+              min="0"
+            />
+            <q-input
+              v-model="nuevoBacklogItem.criteriosAceptacion"
+              label="Criterios de Aceptación"
+              type="textarea"
+              autogrow
+              filled
+            />
+          </q-card-section>
+
+          <q-card-actions align="right" class="q-pa-md">
+            <q-btn flat label="Cancelar" color="negative" v-close-popup />
+            <q-btn
+              type="submit"
+              label="Crear Ítem"
+              color="primary"
+              :loading="isSubmittingBacklog"
+            />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+    <!--Dialog de creacion de sprints-->
+    <q-dialog v-model="mostrarModalSprint">
+      <q-card style="width: 600px; max-width: 90vw">
+        <q-form @submit.prevent="crearSprint">
+          <q-card-section>
+            <div class="text-h6">Crear Nuevo Sprint</div>
+          </q-card-section>
+
+          <q-card-section class="q-gutter-md">
+            <q-input
+              v-model="nuevoSprint.nombre"
+              label="Nombre del Sprint *"
+              filled
+              lazy-rules
+              :rules="[(val) => !!val || 'Nombre obligatorio']"
+            />
+            <q-input
+              v-model="nuevoSprint.objetivo"
+              label="Objetivo del Sprint"
+              type="textarea"
+              filled
+              autogrow
+            />
+
+            <q-input
+              v-model="nuevoSprint.fechaInicio"
+              type="date"
+              label="Fecha Inicio *"
+              filled
+              lazy-rules
+              :rules="[(val) => !!val || 'Requerido']"
+            />
+
+            <div class="col-6">
+              <q-input
+                v-model="nuevoSprint.fechaFin"
+                type="date"
+                label="Fecha Fin *"
+                filled
+                lazy-rules
+                :rules="[(val) => !!val || 'Requerido']"
+              />
+            </div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="q-pa-md">
+            <q-btn flat label="Cancelar" color="negative" v-close-popup />
+            <q-btn
+              type="submit"
+              label="Crear Sprint"
+              color="primary"
+              :loading="isSubmittingSprint"
+            />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="mostrarModalEditarBacklog">
+      <q-card style="width: 600px; max-width: 90vw">
+        <q-form @submit.prevent="actualizarBacklogItem">
+          <q-card-section>
+            <div class="text-h6">Editar Ítem del Backlog</div>
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              v-model="backlogEdit.nombre"
+              label="Título *"
+              filled
+              lazy-rules
+              :rules="[(v) => !!v || 'Requerido']"
+            />
+            <q-input
+              v-model="backlogEdit.descripcion"
+              label="Descripción"
+              type="textarea"
+              filled
+              autogrow
+            />
+            <q-select
+              v-model="backlogEdit.tipo"
+              label="Tipo *"
+              filled
+              :options="[
+                'Historia de Usuario',
+                'Tarea Técnica',
+                'Bug',
+                'Mejora',
+                'Investigación',
+              ]"
+              emit-value
+              map-options
+              lazy-rules
+              :rules="[(v) => !!v || 'Requerido']"
+            />
+            <q-select
+              v-model="backlogEdit.prioridad"
+              label="Prioridad"
+              filled
+              :options="['Muy Alta', 'Alta', 'Media', 'Baja', 'Muy Baja']"
+              emit-value
+              map-options
+            />
+            <q-input
+              v-model.number="backlogEdit.estimacionPuntos"
+              label="Estimación"
+              type="number"
+              filled
+              min="0"
+            />
+            <q-input
+              v-model="backlogEdit.criteriosAceptacion"
+              label="Criterios de Aceptación"
+              type="textarea"
+              filled
+              autogrow
+            />
+          </q-card-section>
+          <q-card-actions align="right" class="q-pa-md">
+            <q-btn flat label="Cancelar" color="negative" v-close-popup />
+            <q-btn
+              type="submit"
+              label="Actualizar"
+              color="primary"
+              :loading="isSubmittingBacklogEdit"
+            />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="mostrarModalEditarSprint">
+      <q-card style="width: 600px; max-width: 90vw">
+        <q-form @submit.prevent="actualizarSprint">
+          <q-card-section>
+            <div class="text-h6">Editar Sprint</div>
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              v-model="sprintEdit.nombre"
+              label="Nombre *"
+              filled
+              lazy-rules
+              :rules="[(v) => !!v || 'Requerido']"
+            />
+            <q-input
+              v-model="sprintEdit.objetivo"
+              label="Objetivo"
+              type="textarea"
+              filled
+              autogrow
+            />
+
+            <q-input
+              v-model="sprintEdit.fechaInicio"
+              type="date"
+              label="Fecha Inicio *"
+              filled
+              lazy-rules
+              :rules="[(v) => !!v || 'Requerido']"
+            />
+
+            <div class="col-6">
+              <q-input
+                v-model="sprintEdit.fechaFin"
+                type="date"
+                label="Fecha Fin *"
+                filled
+                lazy-rules
+                :rules="[(v) => !!v || 'Requerido']"
+              />
+            </div>
+
+            <q-select
+              v-model="sprintEdit.estado"
+              label="Estado *"
+              filled
+              :options="['Planificado', 'En Curso', 'Completado', 'Cancelado']"
+              emit-value
+              map-options
+              lazy-rules
+              :rules="[(v) => !!v || 'Requerido']"
+            />
+          </q-card-section>
+          <q-card-actions align="right" class="q-pa-md">
+            <q-btn flat label="Cancelar" color="negative" v-close-popup />
+            <q-btn
+              type="submit"
+              label="Actualizar"
+              color="primary"
+              :loading="isSubmittingSprintEdit"
+            />
+          </q-card-actions>
+        </q-form>
       </q-card>
     </q-dialog>
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth";
 import api from "../../../api";
-
+const mostrarModalBacklog = ref(false);
+const isSubmittingBacklog = ref(false);
 const router = useRouter();
 const $q = useQuasar();
 const authStore = useAuthStore();
 const proyectos = ref([]);
 const isLoading = ref(true);
+// --- BACKLOG ---
+const backlogItems = ref([]);
+const isLoadingBacklog = ref(false);
+
+const mostrarModalEditarBacklog = ref(false);
+const isSubmittingBacklogEdit = ref(false);
+const backlogEdit = ref({});
+
+const mostrarModalSprint = ref(false);
+const isSubmittingSprint = ref(false);
+// --- SPRINTS ---
+const sprints = ref([]);
+const isLoadingSprints = ref(false);
+
+const mostrarModalEditarSprint = ref(false);
+const isSubmittingSprintEdit = ref(false);
+const sprintEdit = ref({});
 
 // --- ESTADO PARA DIÁLOGO DE CREACIÓN (EXISTENTE) ---
 const mostrarModalCrear = ref(false);
@@ -342,6 +732,39 @@ const mostrarModalDetalles = ref(false);
 const isLoadingDetalle = ref(false);
 const proyectoSeleccionado = ref(null);
 const tabDetalle = ref("general");
+const cargarBacklogItems = async () => {
+  if (!proyectoSeleccionado.value?._id) return;
+  isLoadingBacklog.value = true;
+  try {
+    const response = await api.get(
+      `/api/proyectos-desarrollo/${proyectoSeleccionado.value._id}/backlog-items`,
+      { headers: { Authorization: `Bearer ${authStore.token}` } },
+    );
+    backlogItems.value = response.data;
+  } catch (error) {
+    console.error("Error al cargar backlog:", error);
+    $q.notify({ type: "negative", message: "Error al cargar el backlog." });
+  } finally {
+    isLoadingBacklog.value = false;
+  }
+};
+
+const cargarSprints = async () => {
+  if (!proyectoSeleccionado.value?._id) return;
+  isLoadingSprints.value = true;
+  try {
+    const response = await api.get(
+      `/api/proyectos-desarrollo/${proyectoSeleccionado.value._id}/sprints`,
+      { headers: { Authorization: `Bearer ${authStore.token}` } },
+    );
+    sprints.value = response.data;
+  } catch (error) {
+    console.error("Error al cargar sprints:", error);
+    $q.notify({ type: "negative", message: "Error al cargar los sprints." });
+  } finally {
+    isLoadingSprints.value = false;
+  }
+};
 
 // --- LÓGICA DE OBTENCIÓN DE DATOS (EXISTENTE) ---
 const obtenerProyectos = async () => {
@@ -508,10 +931,196 @@ const formatDate = (dateString) => {
   const options = { year: "numeric", month: "short", day: "numeric" };
   return new Date(dateString).toLocaleDateString("es-PE", options);
 };
+const nuevoBacklogItem = ref({
+  nombre: "",
+  descripcion: "",
+  tipo: "",
+  prioridad: "Media",
+  estimacionPuntos: 0,
+  criteriosAceptacion: "",
+});
 
+const abrirModalBacklog = () => {
+  // Limpia el formulario y muestra el diálogo
+  nuevoBacklogItem.value = {
+    nombre: "",
+    descripcion: "",
+    tipo: "",
+    prioridad: "Media",
+    estimacionPuntos: 0,
+    criteriosAceptacion: "",
+  };
+  mostrarModalBacklog.value = true;
+};
+
+const crearBacklogItem = async () => {
+  if (!proyectoSeleccionado.value?._id) return;
+
+  isSubmittingBacklog.value = true;
+  try {
+    const response = await api.post(
+      `/api/proyectos-desarrollo/${proyectoSeleccionado.value._id}/backlog-items`,
+      nuevoBacklogItem.value,
+      {
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      },
+    );
+
+    $q.notify({ type: "positive", message: "Ítem creado correctamente." });
+    backlogItems.value.unshift(response.data.backlogItem); // lo añadimos en caliente
+    mostrarModalBacklog.value = false;
+  } catch (error) {
+    console.error("Error al crear el ítem del backlog:", error);
+    $q.notify({
+      type: "negative",
+      message:
+        error.response?.data?.mensaje || "Error al crear el ítem del backlog.",
+    });
+  } finally {
+    isSubmittingBacklog.value = false;
+  }
+};
+
+const nuevoSprint = ref({
+  nombre: "",
+  objetivo: "",
+  fechaInicio: "",
+  fechaFin: "",
+});
+
+const abrirModalSprint = () => {
+  nuevoSprint.value = {
+    nombre: "",
+    objetivo: "",
+    fechaInicio: "",
+    fechaFin: "",
+  };
+  mostrarModalSprint.value = true;
+};
+
+const crearSprint = async () => {
+  if (!proyectoSeleccionado.value?._id) return;
+
+  isSubmittingSprint.value = true;
+  try {
+    const response = await api.post(
+      `/api/proyectos-desarrollo/${proyectoSeleccionado.value._id}/sprints`,
+      nuevoSprint.value,
+      {
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      },
+    );
+
+    $q.notify({ type: "positive", message: "Sprint creado exitosamente." });
+    sprints.value.unshift(response.data.sprint);
+    mostrarModalSprint.value = false;
+  } catch (error) {
+    console.error("Error al crear el sprint:", error);
+    $q.notify({
+      type: "negative",
+      message:
+        error.response?.data?.mensaje || "Ocurrió un error al crear el sprint.",
+    });
+  } finally {
+    isSubmittingSprint.value = false;
+  }
+};
+function abrirModalEditarBacklog(item) {
+  backlogEdit.value = { ...item }; // clona el objeto
+  mostrarModalEditarBacklog.value = true;
+}
+
+async function actualizarBacklogItem() {
+  isSubmittingBacklogEdit.value = true;
+  try {
+    const { data } = await api.put(
+      `/api/proyectos-desarrollo/items/${backlogEdit.value._id}`,
+      backlogEdit.value,
+      { headers: { Authorization: `Bearer ${authStore.token}` } },
+    );
+    $q.notify({ type: "positive", message: "Ítem actualizado." });
+    const idx = backlogItems.value.findIndex(
+      (i) => i._id === data.backlogItem._id,
+    );
+    if (idx !== -1) backlogItems.value[idx] = data.backlogItem;
+    mostrarModalEditarBacklog.value = false;
+  } catch (err) {
+    $q.notify({
+      type: "negative",
+      message: err.response?.data?.mensaje || "Error al actualizar.",
+    });
+  } finally {
+    isSubmittingBacklogEdit.value = false;
+  }
+}
+
+async function eliminarBacklogItem(item) {
+  try {
+    await api.delete(`/api/proyectos-desarrollo/items/${item._id}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    $q.notify({ type: "positive", message: "Ítem eliminado." });
+    backlogItems.value = backlogItems.value.filter((i) => i._id !== item._id);
+  } catch (err) {
+    $q.notify({ type: "negative", message: "Error al eliminar ítem." });
+  }
+}
+function abrirModalEditarSprint(sprint) {
+  sprintEdit.value = {
+    ...sprint,
+    fechaInicio: formatFechaISO(sprint.fechaInicio),
+    fechaFin: formatFechaISO(sprint.fechaFin),
+  };
+  mostrarModalEditarSprint.value = true;
+}
+function formatFechaISO(date) {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+async function actualizarSprint() {
+  isSubmittingSprintEdit.value = true;
+  try {
+    const { data } = await api.put(
+      `/api/proyectos-desarrollo/sprints/${sprintEdit.value._id}`,
+      sprintEdit.value,
+      { headers: { Authorization: `Bearer ${authStore.token}` } },
+    );
+    $q.notify({ type: "positive", message: "Sprint actualizado." });
+    const idx = sprints.value.findIndex((s) => s._id === data.sprint._id);
+    if (idx !== -1) sprints.value[idx] = data.sprint;
+    mostrarModalEditarSprint.value = false;
+  } catch (err) {
+    $q.notify({
+      type: "negative",
+      message: err.response?.data?.mensaje || "Error al actualizar sprint.",
+    });
+  } finally {
+    isSubmittingSprintEdit.value = false;
+  }
+}
+
+async function eliminarSprint(sprint) {
+  try {
+    await api.delete(`/api/proyectos-desarrollo/sprints/${sprint._id}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    $q.notify({ type: "positive", message: "Sprint eliminado." });
+    sprints.value = sprints.value.filter((s) => s._id !== sprint._id);
+  } catch (err) {
+    $q.notify({ type: "negative", message: "Error al eliminar sprint." });
+  }
+}
 // --- CICLO DE VIDA (EXISTENTE) ---
 onMounted(() => {
   obtenerProyectos();
+});
+watch(tabDetalle, (newTab) => {
+  if (newTab === "backlog") cargarBacklogItems();
+  else if (newTab === "sprints") cargarSprints();
 });
 </script>
 
