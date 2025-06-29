@@ -68,7 +68,7 @@ const contactos = ref([]);
 const mostrarDialogo = ref(false);
 const form = ref({});
 const columnas = [
-  { name: "nombre", label: "Nombre", field: "nombre", sortable: true },
+  { name: "nombres", label: "Nombre", field: "nombres", sortable: true },
   { name: "correo", label: "Correo", field: "correo", sortable: true },
   { name: "telefono", label: "Teléfono", field: "telefono" },
   { name: "empresa", label: "Empresa", field: "empresa" },
