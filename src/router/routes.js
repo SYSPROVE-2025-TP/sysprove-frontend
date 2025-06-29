@@ -175,6 +175,11 @@ const routes = [
       },
       //Modulo de soporte
       {
+        path: "/dashboard-soporte",
+        component: () =>
+          import("src/pages/Dashboard/Administrador/DashboardSoporte.vue"),
+      },
+      {
         path: "/gestionar-incidencias",
         component: () =>
           import("src/pages/Dashboard/Administrador/GestionarIncidencias.vue"),

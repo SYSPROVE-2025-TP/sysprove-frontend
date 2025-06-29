@@ -128,17 +128,18 @@
               </q-item-section>
               <q-item-section> Dashboard Ventas</q-item-section>
             </q-item>
+
             <q-item
-              v-if="authStore.isAdmin || authStore.isVentas"
+              v-if="authStore.isAdmin"
               clickable
               v-ripple
-              to="ver-notificaciones-contacto"
+              to="/dashboard-soporte"
               class="drawer-item"
             >
               <q-item-section avatar>
-                <q-icon name="mail" />
+                <q-icon name="dashboard" />
               </q-item-section>
-              <q-item-section> Ver Notificaciones de Cliente </q-item-section>
+              <q-item-section> Dashboard Soporte </q-item-section>
             </q-item>
 
             <!-- <q-item clickable v-ripple to="/perfil" class="drawer-item">
@@ -543,7 +544,7 @@
               </q-list>
             </q-expansion-item>
             <q-expansion-item
-              v-if="authStore.isAdmin || authStore.isDesarrollo"
+              v-if="authStore.isAdmin"
               label="Soporte TI"
               icon="support"
               expand-separator
