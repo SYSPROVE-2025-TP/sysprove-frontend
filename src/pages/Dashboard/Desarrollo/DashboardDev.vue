@@ -34,7 +34,7 @@
         <q-table
           :rows="backlogsPendientes"
           :columns="columns"
-          row-key="nombre"
+          row-key="_id"
           dense
           flat
           bordered
@@ -72,6 +72,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import axios from "axios";
 import Chart from "chart.js/auto";
 
 const totalProyectos = ref(0);
@@ -85,60 +86,61 @@ const chartCanvas = ref(null);
 const columns = [
   { name: "nombre", label: "Nombre", field: "nombre", align: "left" },
   { name: "tipo", label: "Tipo", field: "tipo", align: "left" },
-  { name: "estado", label: "Estado", field: "estado", align: "left" },
+  {
+    name: "estadoGeneral",
+    label: "Estado",
+    field: "estadoGeneral",
+    align: "left",
+  },
   {
     name: "proyecto",
     label: "Proyecto",
-    field: (row) => row.proyecto?.nombre || "",
+    field: (row) => row.proyectoDesarrollo?.nombre || "",
     align: "left",
   },
 ];
 
-const cargarDatosFalsos = () => {
-  const proyectos = Array.from({ length: 15 }, (_, i) => ({
-    nombre: `Proyecto ${i + 1}`,
-    sprints: Array.from({ length: Math.floor(Math.random() * 4) + 1 }),
-    backlogs: Array.from(
-      { length: Math.floor(Math.random() * 6) + 2 },
-      (_, j) => ({
-        nombre: `Backlog ${j + 1}`,
-        tipo: j % 2 === 0 ? "Funcionalidad" : "Técnico",
-        estado: Math.random() > 0.4 ? "Completado" : "Pendiente",
-      }),
-    ),
-  }));
+onMounted(async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const config = { headers: { Authorization: `Bearer ${token}` } };
 
-  totalProyectos.value = proyectos.length;
-  totalSprints.value = proyectos.reduce((acc, p) => acc + p.sprints.length, 0);
-  totalBacklogs.value = proyectos.reduce(
-    (acc, p) => acc + p.backlogs.length,
-    0,
-  );
-  totalBacklogsCompletados.value = proyectos.reduce(
-    (acc, p) =>
-      acc + p.backlogs.filter((b) => b.estado === "Completado").length,
-    0,
-  );
+    const [resProyectos, resBacklogs, resSprints] = await Promise.all([
+      axios.get("http://localhost:4000/api/proyectos-desarrollo", config),
+      axios.get("http://localhost:4000/api/backlog-items", config),
+      axios.get("http://localhost:4000/api/sprints", config),
+    ]);
 
-  avanceProyectos.value = proyectos.map((p) => {
-    const total = p.backlogs.length;
-    const completados = p.backlogs.filter(
-      (b) => b.estado === "Completado",
+    totalProyectos.value = resProyectos.data.length;
+    totalBacklogs.value = resBacklogs.data.length;
+    totalBacklogsCompletados.value = resBacklogs.data.filter(
+      (item) => item.estadoGeneral === "Completado",
     ).length;
-    return {
-      nombre: p.nombre,
-      porcentaje: total ? completados / total : 0,
-    };
-  });
+    totalSprints.value = resSprints.data.length;
 
-  backlogsPendientes.value = proyectos.flatMap((p) =>
-    p.backlogs
-      .filter((b) => b.estado === "Pendiente")
-      .map((b) => ({ ...b, proyecto: { nombre: p.nombre } })),
-  );
+    backlogsPendientes.value = resBacklogs.data.filter(
+      (item) => item.estadoGeneral !== "Completado",
+    );
 
-  graficarDistribucion();
-};
+    avanceProyectos.value = resProyectos.data.map((proyecto) => {
+      const backlogs = resBacklogs.data.filter(
+        (b) => b.proyectoDesarrollo === proyecto._id,
+      );
+      const total = backlogs.length;
+      const completados = backlogs.filter(
+        (b) => b.estadoGeneral === "Completado",
+      ).length;
+      return {
+        nombre: proyecto.nombre,
+        porcentaje: total ? completados / total : 0,
+      };
+    });
+
+    graficarDistribucion();
+  } catch (error) {
+    console.error("Error cargando dashboard de desarrollo:", error);
+  }
+});
 
 const graficarDistribucion = () => {
   const completados = totalBacklogsCompletados.value;
@@ -165,8 +167,6 @@ const graficarDistribucion = () => {
     },
   });
 };
-
-onMounted(cargarDatosFalsos);
 </script>
 
 <style scoped>
