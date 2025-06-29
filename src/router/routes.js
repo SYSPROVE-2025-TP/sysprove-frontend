@@ -145,6 +145,16 @@ const routes = [
           import("pages/Dashboard/Desarrollo/ProyectosDesarrolloPage.vue"),
       },
       {
+        path: "/consultar-proyecto-desarrollo",
+        component: () =>
+          import("pages/Dashboard/Desarrollo/VerProgresoProyecto.vue"),
+      },
+      {
+        path: "/feedback-proyecto-desarrollo",
+        component: () =>
+          import("pages/Dashboard/Desarrollo/FeedbackRecibido.vue"),
+      },
+      {
         path: "/aprobar-propuesta",
         component: () =>
           import("pages/Dashboard/Ventas/AprobacionPropuestas.vue"),

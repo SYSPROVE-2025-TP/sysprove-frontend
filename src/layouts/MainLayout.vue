@@ -473,6 +473,22 @@
                   </q-item-section>
                   <q-item-section> Proyectos de Desarrollo </q-item-section>
                 </q-item>
+                <q-item clickable v-ripple to="/consultar-proyecto-desarrollo">
+                  <q-item-section avatar>
+                    <q-icon name="timeline" />
+                  </q-item-section>
+                  <q-item-section>
+                    Consultar Proceso De Proyecto
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-ripple to="/feedback-proyecto-desarrollo">
+                  <q-item-section avatar>
+                    <q-icon name="feedback" />
+                  </q-item-section>
+                  <q-item-section>
+                    Feedback de Proyectos de Desarrollo
+                  </q-item-section>
+                </q-item>
                 <q-item clickable v-ripple to="/desarrollo/tareas">
                   <q-item-section avatar>
                     <q-icon name="task" />
@@ -597,7 +613,9 @@
     </div>
 
     <q-page-container>
-      <router-view />
+      <q-page class="q-pa-md full-height">
+        <router-view />
+      </q-page>
     </q-page-container>
   </q-layout>
 </template>
