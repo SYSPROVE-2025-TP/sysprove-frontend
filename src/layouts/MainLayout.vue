@@ -516,9 +516,7 @@
                   <q-item-section avatar>
                     <q-icon name="task" />
                   </q-item-section>
-                  <q-item-section>
-                    Feedback de proyectos de desarrollo
-                  </q-item-section>
+                  <q-item-section> Feedback Desarrollo </q-item-section>
                 </q-item>
 
                 <q-item clickable v-ripple to="/gestionar-tareas-desarrollo">
