@@ -115,7 +115,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useQuasar } from "quasar";
-import axios from "axios";
+import api from "../../../api";
 
 const $q = useQuasar();
 const interacciones = ref([]);
@@ -143,19 +143,16 @@ const abrirDialogo = () => {
 };
 
 const cargarInteracciones = async () => {
-  const res = await axios.get("http://localhost:4000/interacciones");
+  const res = await api.get("/interacciones");
   interacciones.value = res.data;
 };
 
 const guardarInteraccion = async () => {
   if (form.value._id) {
-    await axios.put(
-      `http://localhost:4000/interacciones/${form.value._id}`,
-      form.value,
-    );
+    await api.put(`/interacciones/${form.value._id}`, form.value);
     $q.notify({ type: "positive", message: "Interacción actualizada" });
   } else {
-    await axios.post("http://localhost:4000/interacciones", form.value);
+    await api.post("/interacciones", form.value);
     $q.notify({ type: "positive", message: "Interacción guardada" });
   }
   limpiarFormulario();
@@ -170,7 +167,7 @@ const editar = (row) => {
 };
 
 const eliminar = async (id) => {
-  await axios.delete(`http://localhost:4000/interacciones/${id}`);
+  await api.delete(`/interacciones/${id}`);
   $q.notify({ type: "negative", message: "Interacción eliminada" });
   cargarInteracciones();
 };
