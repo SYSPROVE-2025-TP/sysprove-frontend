@@ -113,6 +113,7 @@
 import { ref } from "vue";
 import { useMotionVariants } from "@vueuse/motion";
 import { Notify } from "quasar";
+import api from "../../api";
 
 // Inputs
 const nombre = ref("");
@@ -171,15 +172,7 @@ async function enviarFormulario() {
   };
 
   try {
-    const response = await fetch("http://localhost:4000/api/contacto", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) throw new Error("Error al enviar mensaje");
+    await api.post("api/contacto", payload);
 
     Notify.create({
       type: "positive",

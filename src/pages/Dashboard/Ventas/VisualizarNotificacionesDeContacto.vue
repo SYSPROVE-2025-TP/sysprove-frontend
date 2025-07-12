@@ -59,7 +59,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../../../api";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
@@ -84,7 +84,7 @@ const columnas = [
 
 const obtenerSolicitudes = async () => {
   try {
-    const { data } = await axios.get("http://localhost:4000/api/contacto");
+    const { data } = await api.get("api/contacto");
     contactos.value = data;
   } catch (error) {
     $q.notify({ type: "negative", message: "Error al obtener solicitudes" });
@@ -93,7 +93,7 @@ const obtenerSolicitudes = async () => {
 
 const eliminarSolicitud = async (id) => {
   try {
-    await axios.delete(`http://localhost:4000/api/contacto/${id}`);
+    await api.delete(`api/contacto/${id}`);
     contactos.value = contactos.value.filter((c) => c._id !== id);
     $q.notify({ type: "positive", message: "Eliminado correctamente" });
   } catch (error) {
@@ -109,7 +109,7 @@ const editarSolicitud = (solicitud) => {
 const guardarEdicion = async () => {
   try {
     const id = form.value._id;
-    await axios.put(`http://localhost:4000/api/contacto/${id}`, form.value);
+    await api.put(`api/contacto/${id}`, form.value);
     $q.notify({ type: "positive", message: "Actualizado correctamente" });
     mostrarDialogo.value = false;
     obtenerSolicitudes();

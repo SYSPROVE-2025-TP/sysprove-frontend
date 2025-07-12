@@ -72,7 +72,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../../../api";
 import Chart from "chart.js/auto";
 
 const totalProyectos = ref(0);
@@ -102,13 +102,10 @@ const columns = [
 
 onMounted(async () => {
   try {
-    const token = localStorage.getItem("token");
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-
     const [resProyectos, resBacklogs, resSprints] = await Promise.all([
-      axios.get("http://localhost:4000/api/proyectos-desarrollo", config),
-      axios.get("http://localhost:4000/api/backlog-items", config),
-      axios.get("http://localhost:4000/api/sprints", config),
+      api.get("api/proyectos-desarrollo"),
+      api.get("api/backlog-items"),
+      api.get("api/sprints"),
     ]);
 
     totalProyectos.value = resProyectos.data.length;

@@ -77,7 +77,10 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import api from "../../../api";
+import { useAuthStore } from "../../../stores/auth";
+
+const authStore = useAuthStore();
 
 const incidencias = ref([]);
 const escalamientos = ref([]);
@@ -106,23 +109,17 @@ const columns = [
 
 onMounted(async () => {
   try {
-    const token = localStorage.getItem("token");
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-
-    const resInc = await axios.get(
-      "http://localhost:4000/api/incidencias",
-      config,
-    );
-    const resEsc = await axios.get(
-      "http://localhost:4000/api/escalamientos",
-      config,
-    );
+    const resInc = await api.get("api/incidencias", {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    const resEsc = await api.get("api/escalamientos", {
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
 
     incidencias.value = resInc.data;
     escalamientos.value = resEsc.data;
     ultimasIncidencias.value = incidencias.value.slice(0, 5);
 
-    // Simulación básica para separar niveles (puedes ajustar con más lógica según roles o asignación)
     n1.value = incidencias.value.filter((i) => i.estado === "Abierto").length;
     n2.value = incidencias.value.filter(
       (i) => i.estado === "En Proceso",
